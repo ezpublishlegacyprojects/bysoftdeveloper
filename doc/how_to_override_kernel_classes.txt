@@ -1,0 +1,24 @@
+
+1.Create and activate extension
+
+mkdir -p extension/customname/kernel/classes/
+cp -va kernel/classes/ezcontentobjecttree.php extension/customname/kernel/classes/
+
+
+2.configure config.php enable kernel overrides
+<?php
+define('EZP_AUTOLOAD_ALLOW_KERNEL_OVERRIDE', 1);
+?>
+
+
+3.Regenerate autoload cache
+php bin/php/ezpgenerateautoload.php -o
+
+
+
+Solution 2:
+
+Put this code on buttom of config.php
+
+if(file_exists('extension/developer/tests/eztemplatesstatisticsreporter.php'))
+@include_once('extension/developer/tests/eztemplatesstatisticsreporter.php');

@@ -1,0 +1,64 @@
+Installation
+============
+
+ 1. Unpack/unzip
+
+    Unpack the downloaded zip package into the 'extension' directory of your
+    eZ Publish installation.
+
+ 2. Activate extension
+
+    Activate the extension by using the admin interface ( Setup -> Extensions ) or by
+    prepending ezjscore to ActiveExtensions[] in settings/override/site.ini.append.php:
+
+    [ExtensionSettings]
+    ActiveExtensions[]=developer
+    
+    
+ 3. Override the kernel class eZTemplatesStatisticsReporter
+    
+    There are two way to override this class.
+    1) You can directly modify 'config.php' under your install root directory.
+       At the end of this file you can add below line;
+       
+       @include_once('extension/bysoftdeveloper/kernel/eztemplatesstatisticsreporter.php');
+       
+       I guess you already know what i am doing. just provide this class before autoload check that.
+       
+    2) Or the second way to override kernel function is :
+       
+       http://ezpedia.org/solution/overriding_kernel_classes_within_an_extension
+       
+       You can read it and do it by yourself.
+       
+    I recommend you use the first way, since it is very easy.
+    
+
+Usage
+=====
+
+1. We provide a tab in BO, it should not very difficult for you.
+
+2. We provide a floatable template list in debug output, 
+   you can easily click the template and got it file path in text entry, if you are in window OS.
+   
+3. We provide a template operator 'variables', which can be used to interspect when in template.
+
+   Eg: {variables()}
+   
+   The output for this operator include namespace and variables and also javascript
+   
+   
+Help it can be useful to you.
+
+
+Troubleshooting
+===============
+
+1. Support
+
+	If you find problem or suggestion, please don't hesitate raising it at:
+	 
+	   http://projects.ez.no/bysoftdeveloper
+	 
+	Thank you!

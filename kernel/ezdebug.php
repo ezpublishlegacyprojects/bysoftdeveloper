@@ -1687,8 +1687,8 @@ pre{
     border-style: solid solid none;
     border-width: 1px 1px 0;
     color: #666666;
-    display: block;
     float: left;
+    display: block;
     font-weight: bold;
     padding: 4px 8px;
     text-decoration: none;
@@ -1696,26 +1696,26 @@ pre{
 
 .bysoftdeveloper-ul-layout{
     list-style-type: none;
+    height: 40px;
+    display:block;
+    margin: 4px; 4px;
 }
 .bysoftdeveloper-ul-layout li{
 	float: left;
     margin: 0 2px 0 0;
 }
-#bysoftdeveloper-wrapper-nav{
-    list-style-type: none;
-}
 </style>
 EOT;
             // cavin.deng
             echo "<div id=\"debug\" style=\"position:absolute;left:5px;z-index:999;\">";
-            echo '<div id="bysoftdeveloper-toggle" style="background-color:green;color:white;" onclick="bysoftdeveloperToggleDebugBox();">Debug Tool&nbsp;</div>';
+            echo '<div id="bysoftdeveloper-toggle" style="background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">Debug Tool&nbsp;</div>';
             echo '
 <div id="bysoftdeveloper-wrapper" style="display:none;background-color:white;border:3px solid green;width:1100px;">
-	<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
-        <li><a href="#bysoftdeveloper-content">Debug</a></li>
-        <li><a href="#bysoftdeveloper-template">Templates</a></li>
-        <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
-    </ul>
+    	<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
+            <li><a href="#bysoftdeveloper-content">Debug</a></li>
+            <li><a href="#bysoftdeveloper-template">Templates</a></li>
+            <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
+        </ul>
 ';
 
             if ( !$this->UseCSS )
@@ -2134,6 +2134,9 @@ $outputBysoft ="
     <div id='bysoftdeveloper-toolbar' class='bysoftdeveloper-tab-class'>
         $bysoftDebugToolbar
     </div>
+</div>
+<div style='background-color:green;color:white;text-align:center;' onclick='javascript:bysoftdeveloperToggleDebugBox();'>
+    Close it
 </div>
 
 <div>

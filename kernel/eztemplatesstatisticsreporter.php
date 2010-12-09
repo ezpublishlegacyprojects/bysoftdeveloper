@@ -34,6 +34,7 @@
   \brief Generates statistics of tempate usage.
 
 */
+@include_once('extension/bysoftdeveloper/kernel/ezdebug.php');
 class eZTemplatesStatisticsReporter
 {
     /*!
@@ -156,10 +157,9 @@ class eZTemplatesStatisticsReporter
         
         // cavin.deng add these two variables
         $show_design_path_script = <<<EOT
-        <tr><td class="$tdClass" colspan="6">&nbsp;</td></tr>
         <tr>
         	<td colspan="6" align="center">
-        		<input size=100 type="text" value=""/>
+        		<input size=100 type="text" value="" id="bysoftdeveloper-template-reporter-input" />
         	</td>
         </tr>
 EOT;
@@ -168,14 +168,8 @@ EOT;
         
         // cavin.deng add float for template usage button
         $templateusageindiv = <<<EOT
-        <div id="template_usage_float_div" style="position:absolute;left:5px;z-index:999;">
-        	<div id="template_usage_float_toggle_button" style="background-color:green;color:white;" onclick="toggle_template_usage_box();">Templates</div>
-        	<div id="template_usage_float_content" style="display:none; background-color:white;border:3px solid green;">
-        		$stats
-        		<tr onclick="toggle_template_usage_box();"><td align="center" colspan="6" style="color:white;background-color:green;">Close</td></tr>
-        		</table>
-        	</div>
-        </div>
+            $stats
+      	</table>
 EOT;
 
 
@@ -210,8 +204,7 @@ EOT;
         		//var e = e || event || window.event;
         		
         		// find input based on trElement;
-        		var parentNode = trElement.parentNode;
-        		var input = parentNode.getElementsByTagName("input")[0];
+        		var input = document.getElementById('bysoftdeveloper-template-reporter-input');
         		
         		if( $isWin ){
         			file = file.replace(/\//g, "\\\\");
@@ -221,68 +214,6 @@ EOT;
         		
         		//event.cancelBubble = true;
         	}
-        	
-        	function toggle_template_usage_box(){
-        		template_usage_toggle_by_id('template_usage_float_content');
-    		}
-    		
-    		// toggle a element by id or object, 
-			// if status afforded then set this element to that status
-			function template_usage_toggle_by_id(e, status){
-				if( typeof e == 'string' ) e = document.getElementById(e);
-				
-				if( status != undefined ){
-					var value = (status == 'block' || (status != 'none' && status) ) ? 'block' : 'none';
-					e.style.display = value;
-					return true;
-				}
-				
-				if( e.style.display == 'block' ){
-					e.style.display = 'none';
-				}else if(e.style.display == 'none'){
-					e.style.display = 'block';
-				}else{
-					e.style.display = 'none';
-				}
-			}
-			
-    		function template_usage_float_div_float_internal(){
-    			var positionY = 300;
-    			
-    			var content_object = document.getElementById('template_usage_float_content');
-    			if( content_object.style.display == 'block' ){
-    				return;
-    			}
-    			
-    			var obj = document.getElementById('template_usage_float_div');
-    			
-    			var deltaY;
-    			
-    			if( typeof window.pageYOffset != 'undefined' ){
-    				deltaY = window.pageYOffset;	
-    			}else if( typeof document.compatMode != 'undefined' && document.compatMode != 'BackCompat' ){
-    				deltaY = document.documentElement.scrollTop;
-    			}else if( typeof document.body != 'undefined' ){
-    				deltaY = document.body.scrollTop;
-    			}
-    			
-    			deltaY = parseInt(deltaY);
-    			
-    			obj.style.top = positionY + deltaY + 'px';
-    		}
-			
-			function template_usage_float_div_float(){
-				setInterval(template_usage_float_div_float_internal, 100);
-    		}
-    		
-    		// template_usage_float_id function, float event dealing
-    		if (window.addEventListener){
-				window.addEventListener('load', template_usage_float_div_float, false);
-			}else if (window.attachEvent){
-				window.attachEvent('onload', template_usage_float_div_float);
-			}else{
-				window.onload = template_usage_float_div_float;
-			}
         </script>
 EOT;
 

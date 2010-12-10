@@ -1408,7 +1408,7 @@ class eZDebug
 echo <<<EOT
 <script type="text/javascript">
 	//
-	// author <altsee@gmail.com>
+	// author cavin.deng
 	//
 	function bysoftdeveloperAjax(options){
 		
@@ -1745,7 +1745,7 @@ function bysoftdeveloperToggleById(e, status){
 	}
 }
 function bysoftdeveloperDebugFloatInternal(){
-	var positionY = 300;
+	var positionY = 200;
 	
 	var contentObject = document.getElementById('bysoftdeveloper-wrapper');
 	if( contentObject.style.display == 'block' ){
@@ -1820,9 +1820,9 @@ pre{
 EOT;
             // cavin.deng
             echo "<div id=\"debug\" style=\"position:absolute;left:5px;z-index:999;\">";
-            echo '<div id="bysoftdeveloper-toggle" style="background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">Debug Tool&nbsp;</div>';
+            echo '<div id="bysoftdeveloper-toggle" style="background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">Debug Tool</div>';
             echo '
-<div id="bysoftdeveloper-wrapper" style="display:none;background-color:white;border:3px solid green;width:1100px;">
+<div id="bysoftdeveloper-wrapper" style="display:none;background-color:white;border:3px solid green;width:1000px;">
     	<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
             <li><a href="#bysoftdeveloper-content">Debug</a></li>
             <li><a href="#bysoftdeveloper-template">Templates</a></li>
@@ -2233,6 +2233,9 @@ td.timingpoint2
             $bysoftDebugTemplate = ob_get_clean();
         }
         
+        $bysoftdeveloperIniUrl = 'bysoftdeveloper/ini';
+        eZURI::transformURI($bysoftdeveloperIniUrl, false);
+        
         // cavin.deng
         // actually output here
         if ($as_html) {
@@ -2247,7 +2250,7 @@ $outputBysoft ="
     <div id='bysoftdeveloper-toolbar' class='bysoftdeveloper-tab-class'>
         $bysoftDebugToolbar
     </div>
-    <div id='bysoftdeveloper-ini'>
+    <div id='bysoftdeveloper-ini' class='bysoftdeveloper-tab-class'>
         <div id='bysoftdeveloper-ini-form'>
         </div>
         <div id='bysoftdeveloper-ini-content'>
@@ -2256,7 +2259,7 @@ $outputBysoft ="
     </div>
 </div>
 <div style='background-color:green;color:white;text-align:center;' onclick='javascript:bysoftdeveloperToggleDebugBox();'>
-    Close it
+    Close
 </div>
 
 <div>
@@ -2284,11 +2287,13 @@ function bysoftdeveloperShowIniTab(){
     }
 	var iniNode = document.getElementById('bysoftdeveloper-ini');
 	var data = {action:'form'};
-	var options = {url:'bysoftdeveloper/ini', data: data, asyn: false};
-	var result = bysoftdeveloperAjax(options);
-	document.getElementById('bysoftdeveloper-ini-form').innerHTML = result;
-	
+	var options = {url:'$bysoftdeveloperIniUrl', data: data, callback: bysoftdeveloperUpdateIniForm };
+	bysoftdeveloperAjax(options);
 	developerIniFormLoaded = true;
+	
+	function bysoftdeveloperUpdateIniForm(result){
+	    document.getElementById('bysoftdeveloper-ini-form').innerHTML = result;
+    }
 }
 function bysoftdeveloperGetOptionValue(select){
     var options = select.options;
@@ -2303,9 +2308,12 @@ function bysoftdeveloperChangeIniFile(){
     
     
     var data = {action: 'content', file: file, siteaccess: siteaccess};
-    var options = {url:'bysoftdeveloper/ini', data: data, asyn: false};
-    var result = bysoftdeveloperAjax(options);
-    document.getElementById('bysoftdeveloper-ini-content').innerHTML = result;
+    var options = {url:'$bysoftdeveloperIniUrl', data: data, callback: bysoftdeveloperUpdateIniContent};
+    bysoftdeveloperAjax(options);
+    
+    function bysoftdeveloperUpdateIniContent(result){
+        document.getElementById('bysoftdeveloper-ini-content').innerHTML = result;
+    }
 }
 
 </script>

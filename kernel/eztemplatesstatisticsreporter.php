@@ -58,6 +58,19 @@ class eZTemplatesStatisticsReporter
                    "<th>Template loaded</th>" .
                    "<th>Edit</th>" .
                    "<th>Override</th></tr>" );
+            
+            
+        
+            // cavin.deng add these two variables
+            $stats .= <<<EOT
+            <tr>
+            	<td colspan="6" align="center">
+            		Template Path:<input size=150 type="text" value="" id="bysoftdeveloper-template-reporter-input" />
+            	</td>
+            </tr>
+EOT;
+    
+            //$stats .= $show_design_path_script;
         }
         else
         {
@@ -154,17 +167,6 @@ class eZTemplatesStatisticsReporter
                 }
             }
         }
-        
-        // cavin.deng add these two variables
-        $show_design_path_script = <<<EOT
-        <tr>
-        	<td colspan="6" align="center">
-        		<input size=100 type="text" value="" id="bysoftdeveloper-template-reporter-input" />
-        	</td>
-        </tr>
-EOT;
-
-        $stats .= $show_design_path_script;
         
         // cavin.deng add float for template usage button
         $templateusageindiv = <<<EOT

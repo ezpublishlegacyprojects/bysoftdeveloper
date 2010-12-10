@@ -3,7 +3,7 @@
 
 
 {* DESIGN: Header START *}<div class="box-header"><div class="box-ml">
-<h1 class="context-title">{'Settings for %inifile in siteaccess %siteaccess'|i18n('design/admin/settings',, hash( '%inifile', $ini_file, '%siteaccess', $current_siteaccess))}</h1>
+<h1 class="context-title">Settings for {$ini_file} in siteaccess {$current_siteaccess}</h1>
 
 {* DESIGN: subline *}<div class="header-subline"></div>
 
@@ -19,14 +19,14 @@
             <th width="50%">
             {$Blocks.key} ({$Blocks.item.count})&nbsp;&nbsp;&nbsp;
             {if $Blocks.item.editable}
-                 <a href={concat( '/settings/edit/', $current_siteaccess, '/', $ini_file, '/', $Blocks.key)|ezurl}>{'[add setting]'|i18n('design/admin/settings')}</a>
+                 <a href={concat( '/settings/edit/', $current_siteaccess, '/', $ini_file, '/', $Blocks.key)|ezurl}>[add setting]</a>
             {/if}
             </th>
         <th class="tight">
-            {'Placement'|i18n( 'design/admin/settings' )}
+            Placement
         </th>
             <th width="50%">
-                {'Value'|i18n( 'design/admin/settings' )}
+                Value
             </th>
             <th class="tight">&nbsp;</th>
     </tr>
@@ -104,7 +104,7 @@
 <div class="controlbar">
 {* DESIGN: Control bar START *}<div class="box-bc"><div class="box-ml">
 <div class="block">
-    <input class="button" type="submit" name="RemoveButton" value="{'Remove selected'|i18n('design/admin/settings')}" />
+    <input class="button" type="submit" name="RemoveButton" value="Remove selected" />
 </div>
 {* DESIGN: Control bar END *}</div></div>
 </div>

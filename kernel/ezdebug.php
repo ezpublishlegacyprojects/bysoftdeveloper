@@ -1407,6 +1407,116 @@ class eZDebug
             // cavin.deng
 echo <<<EOT
 <script type="text/javascript">
+	//
+	// author <altsee@gmail.com>
+	//
+	function bysoftdeveloperAjax(options){
+		
+		var isOpera = navigator.userAgent.indexOf('Opera') > -1;
+		var isIE = navigator.userAgent.indexOf('MSIE') > 1 && !isOpera;
+		var isMoz = navigator.userAgent.indexOf('Mozilla/5.') == 0 && !isOpera;
+		
+		var request = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
+		
+		// default value for each ajax options;
+		var method = 'post';
+		var callback = null;
+		var asyn = true;
+		var values = null;
+		var url  = null;
+		
+		if( options != null ){
+			for( var k in options ){
+				var v = options[k];
+				switch( k ){
+					case 'method':
+						var method = (v + '' ).toLowerCase();
+						break;
+					case 'callback':
+						callback = v;
+						break;
+					case 'asyn':
+						if( v ){
+							asyn = true;
+						}else{
+							asyn = false;
+						}
+						break;
+					case 'data':
+						values = v;
+						break;
+					case 'url':
+						url = v;
+						break;
+					default:
+						// error options
+						break;
+				}
+			}
+		}
+		
+		var pairs = [];
+		
+		// compose the request data;
+		for(var p in values){
+			var obj = values[p];	
+			if( typeof(obj) == 'object' ){
+				var c = obj.constructor;
+				// Array or hash Array(object)
+				if( c != null && (c == Array || c == Object) ){
+					for( var z in obj ){
+						pair = encodeURIComponent( p + '[' + z + ']' ) + '=' + encodeURIComponent( obj[z] );
+						pairs.push( pair );
+					}
+				}else{
+					pair = encodeURIComponent(p) + encodeURIComponent( obj );
+					pairs.push( pair );
+				}
+			}else{
+				pair = encodeURIComponent(p) + '=' + encodeURIComponent(obj);
+				pairs.push(pair);
+			}
+		}
+		var data = pairs.join('&');
+		
+		var result;
+		
+		if( asyn || (! asyn && ! isMoz) ){
+			request.onreadystatechange = function(){
+				if( request.readyState == 4 ){  // If the request is finished
+					if(request.status == 200){  // If it was successful
+						result = request.responseText;
+						if( callback ){
+							result = callback(result);  // Display the server's response
+						}
+					}
+				}
+			};
+		}
+		
+		if( method == 'get' ){
+			url = url.replace('?', '');
+			url = url + '?' + data;
+		}
+		
+		request.open( method.toUpperCase(), url, asyn);
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		
+		if( method == 'post' ){
+			request.send( data );
+		}else{
+			request.send( null );
+		}
+		
+		// @see, http://hi.baidu.com/snowleung/blog/item/2bbad188cbdd7d9da5c2728f.html
+		if(  ! asyn && isMoz  ){
+			result = request.responseText;
+			if( callback ){
+				result = callback( result );
+			}
+		}
+		return result;
+	}
 /*
 Yetii - Yet (E)Another Tab Interface Implementation
 version 1.6
@@ -1670,7 +1780,9 @@ if (window.addEventListener){
 }else{
 	window.onload = bysoftdeveloperDebugFloat;
 }
+
 </script>
+
 <style type="text/css">
 pre{
 	white-space: pre-line;
@@ -1715,6 +1827,7 @@ EOT;
             <li><a href="#bysoftdeveloper-content">Debug</a></li>
             <li><a href="#bysoftdeveloper-template">Templates</a></li>
             <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
+            <li><a href="#bysoftdeveloper-ini" onclick="javascript:bysoftdeveloperShowIniTab();">Ini</a></li>
         </ul>
 ';
 
@@ -2134,6 +2247,13 @@ $outputBysoft ="
     <div id='bysoftdeveloper-toolbar' class='bysoftdeveloper-tab-class'>
         $bysoftDebugToolbar
     </div>
+    <div id='bysoftdeveloper-ini'>
+        <div id='bysoftdeveloper-ini-form'>
+        </div>
+        <div id='bysoftdeveloper-ini-content'>
+            
+        </div>
+    </div>
 </div>
 <div style='background-color:green;color:white;text-align:center;' onclick='javascript:bysoftdeveloperToggleDebugBox();'>
     Close it
@@ -2142,10 +2262,52 @@ $outputBysoft ="
 <div>
 
 <script type='text/javascript'>
-var tabber1 = new Yetii({
-id: 'bysoftdeveloper-wrapper',
-tabclass: 'bysoftdeveloper-tab-class'
+
+var bysoftdeveloperTabber = new Yetii({
+    id: 'bysoftdeveloper-wrapper',
+    tabclass: 'bysoftdeveloper-tab-class',
+    callback: bysoftdeveloperTabCallback
 });
+
+function bysoftdeveloperTabCallback(tabnumber){
+    //var currentLink = bysoftdeveloperTabber.links[tabnumber-1];
+    // ini configuration tab
+    if (tabnumber == 4) {
+        bysoftdeveloperShowIniTab();
+    }
+}
+
+var developerIniFormLoaded = false;
+function bysoftdeveloperShowIniTab(){
+    if (developerIniFormLoaded) { 
+        return true;
+    }
+	var iniNode = document.getElementById('bysoftdeveloper-ini');
+	var data = {action:'form'};
+	var options = {url:'bysoftdeveloper/ini', data: data, asyn: false};
+	var result = bysoftdeveloperAjax(options);
+	document.getElementById('bysoftdeveloper-ini-form').innerHTML = result;
+	
+	developerIniFormLoaded = true;
+}
+function bysoftdeveloperGetOptionValue(select){
+    var options = select.options;
+    var value = options[select.selectedIndex].value;
+    return value; 
+}
+function bysoftdeveloperChangeIniFile(){
+    var file = document.getElementById('bysoftdeveloperSelectedINIFile');
+    var file = bysoftdeveloperGetOptionValue(file);
+    var siteaccess = document.getElementById('bysoftdeveloperCurrentSiteAccess');
+    var siteaccess = bysoftdeveloperGetOptionValue(siteaccess);
+    
+    
+    var data = {action: 'content', file: file, siteaccess: siteaccess};
+    var options = {url:'bysoftdeveloper/ini', data: data, asyn: false};
+    var result = bysoftdeveloperAjax(options);
+    document.getElementById('bysoftdeveloper-ini-content').innerHTML = result;
+}
+
 </script>
 ";   // end of bysoft developer   
             echo $outputBysoft;

@@ -22,6 +22,12 @@ $ViewList['test'] = array(
 	'script' => 'test.php',
 );
 
+$ViewList['ini'] = array(
+    'functions' => array('read'),
+    'default_navigation_part' => 'ezbysoftdevelopernavigationpart',
+	'script' => 'ini.php',
+);
+
 $FunctionList = array( );
 $FunctionList['read'] = array( );
 

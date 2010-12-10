@@ -7,8 +7,8 @@ ExtensionAutoloadPath[]=bysoftdeveloper
 [RoleSettings]
 PolicyOmitList[]=bysoftdeveloper
 
-
-
+[SiteAccessSettings]
+AnonymousAccessList[]=bysoftdeveloper
 
 
 */?>

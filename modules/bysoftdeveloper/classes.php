@@ -2,6 +2,10 @@
 
 include_once( 'kernel/common/template.php' );
 
+// total disabled translation for this project.
+$ini = eZINI::instance();
+$ini->setVariable('RegionalSettings', 'TextTranslation', 'disabled');
+
 $tpl = templateInit();
 $http = eZHTTPTool::instance();
 
@@ -26,7 +30,6 @@ if ($http->postVariable('action') == 'content') {
     
     $datatypes = eZDataType::registeredDataTypes();
     
-
     $tpl->setVariable('class', $class);
     $tpl->setVariable('class_identifier', $classIdentifier);
     $tpl->setVariable('attributes', $attributes);

@@ -9,6 +9,9 @@
 $Module = & $Params['Module'];
 
 include_once( 'kernel/common/template.php' );
+// total disabled translation for this project.
+$ini = eZINI::instance();
+$ini->setVariable('RegionalSettings', 'TextTranslation', 'disabled');
 
 $class = null;
 

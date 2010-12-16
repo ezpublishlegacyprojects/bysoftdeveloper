@@ -1827,7 +1827,8 @@ EOT;
             <li><a href="#bysoftdeveloper-content">Debug</a></li>
             <li><a href="#bysoftdeveloper-template">Templates</a></li>
             <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
-            <li><a href="#bysoftdeveloper-ini" onclick="javascript:bysoftdeveloperShowIniTab();">Ini</a></li>
+            <li><a href="#bysoftdeveloper-ini">Ini</a></li>
+            <li><a href="#bysoftdeveloper-classes">Classes</a></li>
         </ul>
 ';
 
@@ -2234,7 +2235,9 @@ td.timingpoint2
         }
         
         $bysoftdeveloperIniUrl = 'bysoftdeveloper/ini';
+        $bysoftdeveloperClassesUrl = 'bysoftdeveloper/classes';
         eZURI::transformURI($bysoftdeveloperIniUrl, false);
+        eZURI::transformURI($bysoftdeveloperClassesUrl, false);
         
         // cavin.deng
         // actually output here
@@ -2251,11 +2254,12 @@ $outputBysoft ="
         $bysoftDebugToolbar
     </div>
     <div id='bysoftdeveloper-ini' class='bysoftdeveloper-tab-class'>
-        <div id='bysoftdeveloper-ini-form'>
-        </div>
-        <div id='bysoftdeveloper-ini-content'>
-            
-        </div>
+        <div id='bysoftdeveloper-ini-form'></div>
+        <div id='bysoftdeveloper-ini-content'></div>
+    </div>
+    <div id='bysoftdeveloper-classes' class='bysoftdeveloper-tab-class'>
+        <div id='bysoftdeveloper-classes-form'></div>
+        <div id='bysoftdeveloper-classes-content'></div>
     </div>
 </div>
 <div style='background-color:green;color:white;text-align:center;' onclick='javascript:bysoftdeveloperToggleDebugBox();'>
@@ -2271,6 +2275,13 @@ var bysoftdeveloperTabber = new Yetii({
     tabclass: 'bysoftdeveloper-tab-class',
     callback: bysoftdeveloperTabCallback
 });
+        
+
+function bysoftdeveloperGetOptionValue(select){
+    var options = select.options;
+    var value = options[select.selectedIndex].value;
+    return value; 
+}
 
 function bysoftdeveloperTabCallback(tabnumber){
     //var currentLink = bysoftdeveloperTabber.links[tabnumber-1];
@@ -2278,14 +2289,17 @@ function bysoftdeveloperTabCallback(tabnumber){
     if (tabnumber == 4) {
         bysoftdeveloperShowIniTab();
     }
+    if (tabnumber == 5) {
+        bysoftdeveloperShowClassesTab();
+    }
 }
 
+// ini ajax content 
 var developerIniFormLoaded = false;
 function bysoftdeveloperShowIniTab(){
     if (developerIniFormLoaded) { 
         return true;
     }
-	var iniNode = document.getElementById('bysoftdeveloper-ini');
 	var data = {action:'form'};
 	var options = {url:'$bysoftdeveloperIniUrl', data: data, callback: bysoftdeveloperUpdateIniForm };
 	bysoftdeveloperAjax(options);
@@ -2294,11 +2308,6 @@ function bysoftdeveloperShowIniTab(){
 	function bysoftdeveloperUpdateIniForm(result){
 	    document.getElementById('bysoftdeveloper-ini-form').innerHTML = result;
     }
-}
-function bysoftdeveloperGetOptionValue(select){
-    var options = select.options;
-    var value = options[select.selectedIndex].value;
-    return value; 
 }
 function bysoftdeveloperChangeIniFile(){
     var file = document.getElementById('bysoftdeveloperSelectedINIFile');
@@ -2314,6 +2323,43 @@ function bysoftdeveloperChangeIniFile(){
     function bysoftdeveloperUpdateIniContent(result){
         document.getElementById('bysoftdeveloper-ini-content').innerHTML = result;
     }
+}
+
+// classes ajax content
+var developerClassesFormLoaded = false;
+function bysoftdeveloperShowClassesTab(){
+    if (developerClassesFormLoaded) { 
+        return true;
+    }
+    var data = {action: 'form'};
+    var options = {url: '$bysoftdeveloperClassesUrl', data:data, callback:bysoftdeveloperUpdateClassesForm};
+    bysoftdeveloperAjax(options);
+    developerClassesFormLoaded = true;
+    
+    function bysoftdeveloperUpdateClassesForm(result) {
+        document.getElementById('bysoftdeveloper-classes-form').innerHTML = result; 
+    }
+}
+function bysoftdeveloperChangeClass(){
+    var class = document.getElementById('bysoftdeveloperSelectedClass');
+    var class = bysoftdeveloperGetOptionValue(class);
+    
+    if (!class) return;
+    
+    var data = {action: 'content', class: class};
+    var options = {url:'$bysoftdeveloperClassesUrl', data: data, callback: bysoftdeveloperUpdateClassesContent};
+    bysoftdeveloperAjax(options);
+    
+    function bysoftdeveloperUpdateClassesContent(result){
+        document.getElementById('bysoftdeveloper-classes-content').innerHTML = result;
+    }
+}
+function bysoftdeveloperDisabledSelectOnChange(select, value){
+	for (var i = 0; i < select.options.length; i++) {
+	    if (select.options[i].value == value) {
+	        select.options[i].selected = 'selected';    
+        }
+	}
 }
 
 </script>

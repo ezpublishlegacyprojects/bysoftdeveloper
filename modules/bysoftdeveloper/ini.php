@@ -1,6 +1,8 @@
 <?php
 
-$tpl = eZTemplate::factory();
+include_once( 'kernel/common/template.php' );
+
+$tpl = templateInit();
 $http = eZHTTPTool::instance();
 $ini = eZINI::instance();
 $siteAccessList = $ini->variable( 'SiteAccessSettings', 'AvailableSiteAccessList' );

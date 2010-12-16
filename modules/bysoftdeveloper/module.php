@@ -16,6 +16,11 @@ $ViewList['class'] = array(
 	'script' => 'class.php',
 	'params' => array('classID', 'classVersion'),
 );
+$ViewList['classes'] = array(
+    'functions' => array('read'),
+	'default_navigation_part' => 'ezbysoftdevelopernavigationpart',
+	'script' => 'classes.php'
+);
 $ViewList['test'] = array(
 	'functions' => array('read'),
 	'default_navigation_part' => 'ezbysoftdevelopernavigationpart',

@@ -20,7 +20,7 @@ if ($http->postVariable('action') == 'form') {
 
 if ($http->postVariable('action') == 'content') {
     
-    $classIdentifier = $http->postVariable('class');
+    $classIdentifier = $http->postVariable('selectedClass');
     
     $class = eZContentClass::fetchByIdentifier($classIdentifier);
     

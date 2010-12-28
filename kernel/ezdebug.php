@@ -2341,12 +2341,12 @@ function bysoftdeveloperShowClassesTab(){
     }
 }
 function bysoftdeveloperChangeClass(){
-    var class = document.getElementById('bysoftdeveloperSelectedClass');
-    var class = bysoftdeveloperGetOptionValue(class);
+    var selectedClass = document.getElementById('bysoftdeveloperSelectedClass');
+    var selectedClass = bysoftdeveloperGetOptionValue(selectedClass);
     
-    if (!class) return;
+    if (!selectedClass) return;
     
-    var data = {action: 'content', class: class};
+    var data = {action: 'content', selectedClass: selectedClass};
     var options = {url:'$bysoftdeveloperClassesUrl', data: data, callback: bysoftdeveloperUpdateClassesContent};
     bysoftdeveloperAjax(options);
     

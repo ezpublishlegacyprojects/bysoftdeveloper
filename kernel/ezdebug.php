@@ -1829,6 +1829,7 @@ EOT;
             <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
             <li><a href="#bysoftdeveloper-ini">Ini</a></li>
             <li><a href="#bysoftdeveloper-classes">Classes</a></li>
+            <li><a href="#bysoftdeveloper-translate">Translate</a></li>
         </ul>
 ';
 
@@ -2261,6 +2262,14 @@ $outputBysoft ="
         <div id='bysoftdeveloper-classes-form'></div>
         <div id='bysoftdeveloper-classes-content'></div>
     </div>
+    <div id='bysoftdeveloper-translate' class='bysoftdeveloper-tab-class'>
+        <div id='bysoftdeveloper-translate-wrap'>
+            <p>Source string:</p>
+            <textarea id='bysoftdeveloper-translate-source' rows=5 onkeyup='javascript:bysoftdeveloperTranslate();' style='margin-left:20px;width:90%'></textarea>
+            <p>Converted applicable characters in string:</p>
+            <textarea id='bysoftdeveloper-translate-result' rows=5 style='margin-left:20px;width:90%'></textarea>
+        </div>
+    </div>
 </div>
 <div style='background-color:green;color:white;text-align:center;' onclick='javascript:bysoftdeveloperToggleDebugBox();'>
     Close
@@ -2362,6 +2371,20 @@ function bysoftdeveloperDisabledSelectOnChange(select, value){
 	}
 }
 
+// translate utility
+function bysoftdeveloperTranslate(){
+    var sourceText = document.getElementById('bysoftdeveloper-translate-source').value;
+
+    sourceText = sourceText + '';
+    sourceText = sourceText.replace(/\\&/g, '&amp;');
+    sourceText = sourceText.replace(/\\\"/g, '&quot;');
+    sourceText = sourceText.replace(/\\'/g, '&apos;');
+    sourceText = sourceText.replace(/\\</g, '&lt;');
+    sourceText = sourceText.replace(/\\>/g, '&gt;');
+    
+    // target
+    document.getElementById('bysoftdeveloper-translate-result').value = sourceText;
+}
 </script>
 ";   // end of bysoft developer   
             echo $outputBysoft;

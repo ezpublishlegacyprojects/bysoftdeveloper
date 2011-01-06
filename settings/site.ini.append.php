@@ -7,8 +7,14 @@ ExtensionAutoloadPath[]=bysoftdeveloper
 [RoleSettings]
 PolicyOmitList[]=bysoftdeveloper
 
+# do not modify it
 [SiteAccessSettings]
 AnonymousAccessList[]=bysoftdeveloper
 
+################################
+#
+#   Your configuration below:
+#
+################################
 
 */?>

@@ -12,13 +12,25 @@ if ($http->postVariable('action') == 'form'){
     $rootDir = 'settings';
     $iniFiles = eZDir::recursiveFindRelative( $rootDir, '', '.ini' );
     
-    // find all .ini files in active extensions
-    foreach ( eZINI::globalOverrideDirs() as $iniDataSet )
-    {
-        $iniPath = $iniDataSet[1] ? $iniDataSet[0] : 'settings/' . $iniDataSet[0];
-        $iniFiles = array_merge( $iniFiles, eZDir::recursiveFindRelative( $iniPath, '', '.ini' ) );
-        $iniFiles = array_merge( $iniFiles, eZDir::recursiveFindRelative( $iniPath, '', '.ini.append.php' ) );
+    if (! is_callable(array('eZINI', 'globalOverrideDirs'))) {
+	    // find all .ini files in active extensions
+	    // version < 4.4
+	    // @todo, please correct me
+		foreach ( $GLOBALS['eZINIOverrideDirList'] as $iniDataSet )
+		{
+		    $rootDir = $iniDataSet[0];
+		    $iniFiles = array_merge( $iniFiles, eZDir::recursiveFindRelative( $rootDir, '', '.ini' ) );
+		}
+    } else {
+	    // find all .ini files in active extensions
+	    foreach ( eZINI::globalOverrideDirs() as $iniDataSet )
+	    {
+	        $iniPath = $iniDataSet[1] ? $iniDataSet[0] : 'settings/' . $iniDataSet[0];
+	        $iniFiles = array_merge( $iniFiles, eZDir::recursiveFindRelative( $iniPath, '', '.ini' ) );
+	        $iniFiles = array_merge( $iniFiles, eZDir::recursiveFindRelative( $iniPath, '', '.ini.append.php' ) );
+	    }
     }
+    
     
     // extract all .ini files without path
     $iniFiles = preg_replace('%.*/%', '', $iniFiles );

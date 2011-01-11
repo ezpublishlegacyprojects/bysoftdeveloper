@@ -7,7 +7,7 @@ $phpBinaryPath = $bysoftDevINI->variable('BysoftDeveloper', 'PHPBinaryPath');
 exec($phpBinaryPath . ' -v', $return);
 
 if (strpos($return[0], 'PHP') === false) {
-	echo "$phpBinaryPath isn't PHP CLI!";
+	echo "\"$phpBinaryPath\" isn't PHP CLI, please change it in bysoftdeveloper.ini";
 } else {
 	$cleanCacheCommand = $phpBinaryPath . ' bin/php/ezcache.php --clear-all --no-colors';
 	exec($cleanCacheCommand, $output, $status);

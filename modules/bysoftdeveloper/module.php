@@ -33,6 +33,13 @@ $ViewList['ini'] = array(
 	'script' => 'ini.php',
 );
 
+$ViewList["clearcache"] = array(
+    "functions" => array( 'read' ),
+    "default_navigation_part" => 'ezbysoftdevelopernavigationpart',
+    "script" => "clearcache.php",
+    "params" => array( ) 
+);
+
 $FunctionList = array( );
 $FunctionList['read'] = array( );
 

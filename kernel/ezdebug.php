@@ -1726,6 +1726,26 @@ function Yetii() {
 <script type="text/javascript">
 function bysoftdeveloperToggleDebugBox(){
 	bysoftdeveloperToggleById('bysoftdeveloper-wrapper');
+	bysoftdeveloperToggleById('bysoftdeveloper-clear-cache');
+	//bysoftdeveloperToggleInlineById('bysoftdeveloper-clear-cache');
+}
+
+function bysoftdeveloperToggleInlineById(e, status) {
+	if( typeof e == 'string' ) e = document.getElementById(e);
+				
+	if( status != undefined ){
+		var value = (status == 'inline' || (status != 'none' && status) ) ? 'inline' : 'none';
+		e.style.display = value;
+		return true;
+	}
+	
+	if( e.style.display == 'inline' ){
+		e.style.display = 'none';
+	}else if(e.style.display == 'none'){
+		e.style.display = 'inline';
+	}else{
+		e.style.display = 'none';
+	}
 }
 function bysoftdeveloperToggleById(e, status){
 	if( typeof e == 'string' ) e = document.getElementById(e);
@@ -1819,24 +1839,37 @@ pre{
 </style>
 EOT;
             // cavin.deng
-            echo "<div id=\"debug\" style=\"position:absolute;left:5px;z-index:999;\">";
-            echo '<div id="bysoftdeveloper-toggle" style="background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">Debug Tool</div>';
-            echo '
-<div id="bysoftdeveloper-wrapper" style="display:none;background-color:white;border:3px solid green;width:1000px;">
-    	<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
-            <li><a href="#bysoftdeveloper-content">Debug</a></li>
-            <li><a href="#bysoftdeveloper-template">Templates</a></li>
-            <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
-            <li><a href="#bysoftdeveloper-ini">Ini</a></li>
-            <li><a href="#bysoftdeveloper-classes">Classes</a></li>
-            <li><a href="#bysoftdeveloper-translate">Translate</a></li>
-        </ul>
-';
-
+            
+			echo <<<EOT
+	<div id="debug" style="position:absolute;left:5px;z-index:999">
+		<div id="bysoftdeveloper-toggle" style="height:20px;background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">
+			<a style="color:white;float:left;">Debug Tool</a>
+			<a onclick="javascript:bysoftdeveloperClearCache(event);" 
+           		id="bysoftdeveloper-clear-cache" 
+          		style="display:none;color:white;float:right;">
+           		Clear Cache
+           	</a>
+		</div>
+		<div id="bysoftdeveloper-message" style="padding-left:10px;padding-right:10px;background-color:green;color:white;text-align:center;">
+		</div>
+		<div id="bysoftdeveloper-wrapper" 
+			style="display:none;background-color:white;border:3px solid green;width:1000px;">
+	    	
+			<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
+	            <li><a href="#bysoftdeveloper-content">Debug</a></li>
+	            <li><a href="#bysoftdeveloper-template">Templates</a></li>
+	            <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
+	            <li><a href="#bysoftdeveloper-ini">Ini</a></li>
+	            <li><a href="#bysoftdeveloper-classes">Classes</a></li>
+	            <li><a href="#bysoftdeveloper-translate">Translate</a></li>
+	        </ul>
+EOT;
+            
             if ( !$this->UseCSS )
             {
-                echo "<STYLE TYPE='text/css'>
-                <!--
+            	echo <<<EOT
+<style type='text/css'>
+<!--
 td.debugheader
 {
     background-color : #eeeeee;
@@ -1866,9 +1899,9 @@ td.timingpoint2
     font-size : 65%;
     font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
-
 -->
-</STYLE>";
+</style>
+EOT;
             }
             // cavin.deng
             // capture main debug output
@@ -2237,13 +2270,15 @@ td.timingpoint2
         
         $bysoftdeveloperIniUrl = 'bysoftdeveloper/ini';
         $bysoftdeveloperClassesUrl = 'bysoftdeveloper/classes';
+        $bysoftdeveloperClearCacheUrl = 'bysoftdeveloper/clearcache';
         eZURI::transformURI($bysoftdeveloperIniUrl, false);
         eZURI::transformURI($bysoftdeveloperClassesUrl, false);
+        eZURI::transformURI($bysoftdeveloperClearCacheUrl, false);
         
         // cavin.deng
         // actually output here
         if ($as_html) {
-$outputBysoft ="
+$outputBysoft = <<<EOT
 <div class='bysoftdeveloper-tabs-container'>
     <div id='bysoftdeveloper-content' class='bysoftdeveloper-tab-class'>
         $bysoftDebugContent
@@ -2284,7 +2319,30 @@ var bysoftdeveloperTabber = new Yetii({
     tabclass: 'bysoftdeveloper-tab-class',
     callback: bysoftdeveloperTabCallback
 });
-        
+
+// after ts (1000 = 1s) to hidden message content
+function bysoftdeveloperHiddenMessage(ts) {
+	setTimeout(function(){
+		document.getElementById('bysoftdeveloper-message').style.display = 'none';
+        }, ts);
+}
+
+// clean cache in ez publish
+function bysoftdeveloperClearCache(e){
+	// ie
+	if (window.event) {
+		e.cancelBubble = true;
+    } else {
+		e.stopPropagation();
+    }
+	var options = {url:'$bysoftdeveloperClearCacheUrl', callback:bysoftdeveloperClearCacheMessage};
+	function bysoftdeveloperClearCacheMessage(result){
+		document.getElementById('bysoftdeveloper-message').innerHTML = result;
+		document.getElementById('bysoftdeveloper-message').style.display = 'block';
+		bysoftdeveloperHiddenMessage(3000);
+    }
+	bysoftdeveloperAjax(options);
+}
 
 function bysoftdeveloperGetOptionValue(select){
     var options = select.options;
@@ -2386,7 +2444,8 @@ function bysoftdeveloperTranslate(){
     document.getElementById('bysoftdeveloper-translate-result').value = sourceText;
 }
 </script>
-";   // end of bysoft developer   
+EOT;
+// end of bysoft developer   
             echo $outputBysoft;
         }
         

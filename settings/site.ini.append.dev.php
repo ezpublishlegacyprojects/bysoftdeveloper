@@ -21,7 +21,7 @@ StaticCache=disabled
 Cache=disabled
 
 [DebugSettings]
-[DebugOutput=enabled
+DebugOutput=enabled
 #DisplayDebugWarnings=disabled
 
 

@@ -17,4 +17,7 @@ AnonymousAccessList[]=bysoftdeveloper
 #
 ################################
 
+[RegionalSettings]
+#Locale=eng-GB
+
 */?>

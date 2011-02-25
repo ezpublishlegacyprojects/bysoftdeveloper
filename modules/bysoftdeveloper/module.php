@@ -40,6 +40,13 @@ $ViewList["clearcache"] = array(
     "params" => array( ) 
 );
 
+$ViewList["search"] = array(
+    "functions" => array( 'read' ),
+    "default_navigation_part" => 'ezbysoftdevelopernavigationpart',
+    "script" => "search.php",
+    "params" => array( ) 
+);
+
 $FunctionList = array( );
 $FunctionList['read'] = array( );
 

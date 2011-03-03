@@ -23,6 +23,35 @@ eZDebug::updateSettings($settings);
 
 $tpl = templateInit();
 
+function findClassPathByName($className)
+{
+    static $ezpClasses = null;
+   
+    if ($ezpClasses === null) {
+        $ezRoot = '';
+        $ezpKernelClasses = require $ezRoot . 'autoload/ezp_kernel.php';
+        $ezpExtensionClasses = false;
+
+        if (file_exists($ezRoot . 'var/autoload/ezp_extension.php')) {
+            $ezpExtensionClasses = require $ezRoot . 'var/autoload/ezp_extension.php';
+        }
+
+        if ($ezpExtensionClasses) {
+            $ezpClasses = array_merge($ezpKernelClasses, $ezpExtensionClasses);
+        }
+
+        if (defined('EZP_AUTOLOAD_ALLOW_KERNEL_OVERRIDE') and EZP_AUTOLOAD_ALLOW_KERNEL_OVERRIDE) {
+            if ($ezpKernelOverrideClasses = include $ezRoot . 'var/autoload/ezp_override.php') {
+                $ezpClasses = array_merge($ezpClasses, $ezpKernelOverrideClasses);
+            }
+        }
+    }
+
+    if (isset($ezpClasses[$className])) {
+        return $ezpClasses[$className];
+    }
+}
+
 function adjustPath($path) {
     // cavin.deng add these two variables
     $isWin = (substr(PHP_OS, 0, 3) == 'WIN') ? 1 : 0;
@@ -89,7 +118,11 @@ foreach ($tpl->Operators as $operator => $info) {
     $info['path'] = adjustPath($info['script']);
     $info['name'] = $operator;
     if (substr($operator , 0, 2) != '__') {
-        $info['path'] = adjustPath($info['script']);
+        if (isset($info['class'])) {
+            $info['path'] = adjustPath(findClassPathByName($info['class']));
+        } else {
+            
+        }
         // cateogrized
         if (array_key_exists($info['class'],$operatorClassToNameMaps)) {
             $templateOperators[$operatorClassToNameMaps[$info['class']]][$operator] = $info;
@@ -140,13 +173,17 @@ $functionFuncNameToNameMaps = array(
 foreach ($tpl->Functions as $fun => $info) {
     if (!isset($info['script'])) {
         if ($info['function'] == 'eZObjectForwardInit') {
-            $info['script'] = 'kernel/common/eztemplateautoload.php';
+            $info['script'] = adjustPath('kernel/common/eztemplateautoload.php');
         }
         if ($info['function'] == 'eZSurveyForwardInit') {
-            $info['script'] = 'extension/ezsurvey/autoloads/eztemplateautoload.php';
+            $info['script'] = adjustPath('extension/ezsurvey/autoloads/eztemplateautoload.php');
         }
     }
-    $info['path'] = adjustPath($info['script']);
+    if (isset($info['class'])) {
+        $info['path'] =  adjustPath(findClassPathByName($info['class']));
+    } else {
+        $info['path'] = '';
+    }
     $info['name'] = $fun;
     if (array_key_exists($info['class'], $functionClassToNameMaps)) {
         $templateFunctions[$functionClassToNameMaps[$info['class']]][$fun] = $info;
@@ -166,7 +203,11 @@ foreach ($tpl->Functions as $fun => $info) {
 ///// function attributes
 $templateFuncAttrs = array();
 foreach ($tpl->FunctionAttributes as $attr => $info){
-    $info['path'] = adjustPath($info['script']);
+    if (isset($info['class'])) {
+        $info['path'] =  adjustPath(findClassPathByName($info['class']));
+    } else {
+        $info['path'] = '';
+    }
     $info['name'] = $attr;
     $templateFuncAttrs[$attr] = $info;
 }

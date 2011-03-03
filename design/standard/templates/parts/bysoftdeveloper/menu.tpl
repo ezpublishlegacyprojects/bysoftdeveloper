@@ -9,6 +9,7 @@
 <ul>
     <li><div><a href={'bysoftdeveloper/class'|ezurl}>Class Definition</a></div></li>
     <li><div><a href={'bysoftdeveloper/template'|ezurl}>Template Infomation</a></div></li>
+    <li><div><a href={'bysoftdeveloper/search'|ezurl}>Search</a></div></li>
     <li><div><a href={'bysoftdeveloper/test'|ezurl}>Test</a></div></li>
 </ul>
 <p>&nbsp;</p><p>&nbsp;</p>

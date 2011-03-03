@@ -70,26 +70,65 @@ table.line td.category{
 	color:white;
 	cursor:pointer;
 }
-input{
+textarea{
+	width: 100%;
 	border: 0;
 	border-bottom: 1px solid #EAEAEA;
 }
 </style>
 <script type="text/javascript">
 
-function showInfo(name, script, path, evt){
+function showInfo(name, path, evt){
 	var w = document.getElementById('window');
 	
 	document.getElementById('name').innerHTML = name;
-	document.getElementById('script').value = script;
-	document.getElementById('script').setAttribute('size', new String(script).length + 8);
 	document.getElementById('path').value = path;
-	document.getElementById('path').setAttribute('size', new String(path).length + 8);
 	w.style.display = 'block';
 	
-	
-	
 	document.getElementById('path').select();
+	showTips(w, evt);
+}
+
+function showTips(obj, evt)
+{
+
+  var fixed = 14;
+  var xPos = parseInt(evt.clientX);
+  var yPos = parseInt(evt.clientY);
+  
+  var currentTop = document.body.scrollTop;
+  
+  var clientWidth;
+  var clientHeight;
+  var totalWidth;
+  var totalHeight;
+  
+  if((document.body)&&(document.body.clientWidth))
+     clientWidth = document.body.clientWidth;
+  if((document.body)&&(document.body.clientHeight))
+     clientHeight = document.body.clientHeight;
+  
+  if( document.body ){
+      totalWidth = parseInt( document.body.scrollWidth );
+      totalHeight =parseInt( document.body.scrollHeight );
+  }
+  
+  objHeight = obj.offsetHeight;
+  objWidth = obj.offsetWidth;
+
+  if (xPos + objWidth > totalWidth) {
+    obj.style.left = xPos - objWidth - fixed;
+  } else {
+    obj.style.left = xPos + fixed;
+  }
+  if (yPos + objHeight > totalHeight) {
+    obj.style.top =  yPos - objHeight - fixed + currentTop;
+  } else if (yPos + objHeight > clientHeight){
+    obj.style.top = yPos - objHeight - fixed + currentTop;
+  } else {
+    obj.style.top = yPos + fixed + currentTop;
+  }
+
 }
 
 
@@ -103,14 +142,7 @@ function closeWindow(){
 
 <div id="window" style="display:none">
 	<div id="name" onclick="javascript:closeWindow();">name</div>
-	<div>
-		<label for="script">Script:</label><br />
-		&nbsp;&nbsp;<input id="script" size="60" type="text" onclick="javascript:this.select();" value="" />
-	</div>
-	<div>
-		<label for="path">Path:</label><br />
-		&nbsp;&nbsp;<input id="path" size="60" type="text" onclick="javascript:this.select();" value="" />
-	</div>
+	<div><textarea id="path"  type="text" onclick="javascript:this.select();" value="" /></textarea></div>
 </div>
 
 <div id="wrap">
@@ -135,7 +167,7 @@ function closeWindow(){
 		<table class="operator line">
 			<tr><td class="category"><strong>{$category}</strong></td>
 			{foreach $operators as $info}
-				<td><a onclick="showInfo('{$info.name}', '{$info.script}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
+				<td><a onclick="showInfo('{$info.name}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
 			{/foreach}
 			</tr>
 		</table>
@@ -145,7 +177,7 @@ function closeWindow(){
 			{foreach $operators|array_intel($length,0) as $groups}
 				<tr>
 					{foreach $groups as $info}
-						<td><a onclick="showInfo('{$info.name}', '{$info.script}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
+						<td><a onclick="showInfo('{$info.name}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
 					{/foreach}
 				</tr>
 			{/foreach}
@@ -168,7 +200,7 @@ function closeWindow(){
 		<table class="function line">
 			<tr><td class="category"><strong>{$category}</strong></td>
 			{foreach $functions as $info}
-				<td><a onclick="showInfo('{$info.name}', '{$info.script}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
+				<td><a onclick="showInfo('{$info.name}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
 			{/foreach}
 			</tr>
 		</table>
@@ -178,7 +210,7 @@ function closeWindow(){
 			{foreach $functions|array_intel($length,0) as $groups}
 				<tr>
 					{foreach $groups as $info}
-						<td><a onclick="showInfo('{$info.name}', '{$info.script}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
+						<td><a onclick="showInfo('{$info.name}', '{$info.path}', event);" title="{$info.script}">{$info.name}</a></td>
 					{/foreach}
 				</tr>
 			{/foreach}
@@ -189,7 +221,7 @@ function closeWindow(){
 <hr />
 <table><tr><td><strong>Function Attributes</strong></td>
 	{foreach $template_funcattrs as $attr => $info}
-		<td><a onclick="showInfo('{$info.name}', '{$info.script}', '{$info.path}', event);" title="{$info.script}">{$attr}</a></td>
+		<td><a onclick="showInfo('{$info.name}', '{$info.path}', event);" title="{$info.script}">{$attr}</a></td>
 	{/foreach}
 </tr></table>
 

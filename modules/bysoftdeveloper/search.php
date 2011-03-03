@@ -67,6 +67,7 @@ $useSearchCode = $ini->variable( 'SearchSettings', 'SearchViewHandling' ) == 'de
 $logSearchStats = $ini->variable( 'SearchSettings', 'LogSearchStats' ) == 'enabled';
 
 // cavin.deng
+$ini->setVariable('SearchSettings', 'LogSearchStats', 'disabled');
 $ini->setVariable('SearchSettings', 'AllowEmptySearch', 'enabled');
 // we don't use ezfind since it maybe not avaiable if solr doesn't start
 $ini->setVariable('SearchSettings', 'SearchEngine', 'eZSearchEngine');

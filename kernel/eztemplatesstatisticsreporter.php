@@ -213,8 +213,10 @@ EOT;
         		}
         		input.value=file;
         		input.select();
-        		
-        		//event.cancelBubble = true;
+        		if( e.stopPropagation ) 
+        			e.stopPropagation();
+        		else 
+        			e.cancelBubble = true
         	}
         </script>
 EOT;

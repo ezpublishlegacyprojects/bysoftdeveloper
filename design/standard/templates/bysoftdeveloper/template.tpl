@@ -92,43 +92,57 @@ function showInfo(name, path, evt){
 function showTips(obj, evt)
 {
 
-  var fixed = 14;
-  var xPos = parseInt(evt.clientX);
-  var yPos = parseInt(evt.clientY);
-  
-  var currentTop = document.body.scrollTop;
-  
-  var clientWidth;
-  var clientHeight;
-  var totalWidth;
-  var totalHeight;
-  
-  if((document.body)&&(document.body.clientWidth))
-     clientWidth = document.body.clientWidth;
-  if((document.body)&&(document.body.clientHeight))
-     clientHeight = document.body.clientHeight;
-  
-  if( document.body ){
-      totalWidth = parseInt( document.body.scrollWidth );
-      totalHeight =parseInt( document.body.scrollHeight );
-  }
-  
-  objHeight = obj.offsetHeight;
-  objWidth = obj.offsetWidth;
+    var fixed = 14;
+    var xPos = parseInt(evt.clientX);
+    var yPos = parseInt(evt.clientY);
+    
+    var scrollTop;
+    var scrollLeft;
+    var clientWidth;
+    var clientHeight;
+    var scrollWidth;
+    var scrollHeight;
 
-  if (xPos + objWidth > totalWidth) {
-    obj.style.left = xPos - objWidth - fixed;
-  } else {
-    obj.style.left = xPos + fixed;
-  }
-  if (yPos + objHeight > totalHeight) {
-    obj.style.top =  yPos - objHeight - fixed + currentTop;
-  } else if (yPos + objHeight > clientHeight){
-    obj.style.top = yPos - objHeight - fixed + currentTop;
-  } else {
-    obj.style.top = yPos + fixed + currentTop;
-  }
-
+    if (document.documentElement) {
+        scrollTop = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
+        scrollLeft = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft;
+        clientWidth = document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth;
+        clientHeight = document.documentElement.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight;
+        scrollWidth = document.documentElement.scrollWidth ? document.documentElement.scrollWidth : document.body.scrollWidth;
+        scrollHeight = document.documentElement.scrollHeight ? document.documentElement.scrollHeight : document.body.scrollHeight;
+    } else if (document.body) {
+        scrollTop = document.body.scrollTop;
+        scrollLeft = document.body.scrollLeft;
+        clientWidth = document.body.clientWidth;
+        clientHeight = document.body.clientHeight;
+        scrollWidth = document.body.scrollWidth;
+        scrollHeight = document.body.scrollHeight;
+    }
+    scrollTop = parseInt(scrollTop);
+    scrollLeft = parseInt(scrollLeft);
+    clientWidth = parseInt(clientWidth);
+    clientHeight = parseInt(clientHeight);
+    scrollWidth = parseInt(scrollWidth);
+    scrollHeight = parseInt(scrollHeight);
+    
+    objHeight = obj.offsetHeight;
+    objWidth = obj.offsetWidth;
+    
+    if (xPos + objWidth > scrollWidth) {
+        obj.style.left = xPos - objWidth - fixed +  scrollLeft + 'px';
+    } else if (xPos + objWidth > clientWidth) {
+        obj.style.left = xPos - objWidth - fixed + scrollLeft + 'px';
+    } else {
+        obj.style.left = xPos + fixed + scrollLeft + 'px';
+    }
+    if (yPos + objHeight > scrollHeight) {
+        obj.style.top =  yPos - objHeight - fixed + scrollTop + 'px';
+    } else if (yPos + objHeight > clientHeight){
+        obj.style.top = yPos - objHeight - fixed + scrollTop + 'px';
+    } else {
+        obj.style.top = yPos + fixed + scrollTop + 'px';
+    }
+    
 }
 
 

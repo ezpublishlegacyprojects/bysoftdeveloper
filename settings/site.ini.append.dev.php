@@ -8,7 +8,9 @@
 TemplateCache=disabled
 TemplateCompile=disabled
 ShowUsedTemplates=enabled
-#Debug=enabled
+Debug=enabled
+# turn on this, will show info about template file in page.
+#ShowXHTMLCode=enabled
 #TemplateOptimization=disabled
 #TemplateCompression=disabled
 #DevelopmentMode=disabled

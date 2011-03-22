@@ -86,16 +86,11 @@ $groups = eZContentClassGroup::fetchList(false, true);
 eZDataType::loadAndRegisterAllTypes();
 $datatypes = eZDataType::registeredDataTypes();
 
-$ini = eZINI::instance('easypublish.ini');
-$defaultDataType = strtolower(trim($ini->variable('easypublishClassSettings', 'DefaultDataType')));
 
 $datatypeInfoArray = array();
 foreach ($datatypes as $dt){
 	$properties = $dt->attribute('properties');
 
-	if( $dt->DataTypeString == $defaultDataType){
-		$defaultDataType = $dt;
-	}
 	$datatypeInfoArray[$dt->DataTypeString] = array(
 		'is_indexable' => $dt->attribute('is_indexable'),
 		'is_information_collector' => $dt->attribute('is_information_collector'),

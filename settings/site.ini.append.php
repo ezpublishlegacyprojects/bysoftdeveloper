@@ -1,6 +1,8 @@
 <?php /* #?ini charset="utf-8"?
 # do not modify it
 [TemplateSettings]
+#Debug=enabled
+#ShowXHTMLCode=enabled
 ExtensionAutoloadPath[]=bysoftdeveloper
 
 # do not modify it

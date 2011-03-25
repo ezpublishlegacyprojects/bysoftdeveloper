@@ -1,9 +1,16 @@
 <?php /* #?ini charset="utf-8"?
 # do not modify it
 [TemplateSettings]
-#Debug=enabled
-#ShowXHTMLCode=enabled
 ExtensionAutoloadPath[]=bysoftdeveloper
+
+ShowUsedTemplates=enabled
+Debug=enabled
+ShowXHTMLCode=disabled
+DevelopmentMode=enabled
+
+
+[DebugSettings]
+DebugOutput=enabled
 
 # do not modify it
 [RoleSettings]
@@ -13,12 +20,13 @@ PolicyOmitList[]=bysoftdeveloper
 [SiteAccessSettings]
 AnonymousAccessList[]=bysoftdeveloper
 
+
+
 ################################
 #
 #   Your configuration below:
 #
 ################################
-
 [RegionalSettings]
 #Locale=eng-GB
 

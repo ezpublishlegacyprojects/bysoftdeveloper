@@ -1841,7 +1841,7 @@ EOT;
             // cavin.deng
             
 			echo <<<EOT
-	<div id="debug" style="position:absolute;left:5px;z-index:999">
+	<div id="debug" style="position:absolute;left:5px;z-index:999;font-size:11px;font-family:Verdana,Arial,Tahoma,'Courier New';">
 		<div id="bysoftdeveloper-toggle" style="height:20px;background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">
 			<a style="color:white;float:left;">Debug Tool</a>
 			<a onclick="javascript:bysoftdeveloperClearCache(event);" 

@@ -6,6 +6,6 @@
 {*cavin.deng start*}
 &nbsp;&nbsp;&nbsp;&nbsp;
 {def $prefer_lang=ezini('BysoftDeveloper', 'SearchResultEditLanguage', 'bysoftdeveloper.ini')}
-<a target="_blank" title="cavin add quick edit link" href={concat('content/edit/',$node.object.id, '/x/', $prefer_lang)|ezurl} title="Edit">Edit</a>
+<a title="cavin add quick edit link" href={concat('content/edit/',$node.object.id, '/x/', $prefer_lang)|ezurl} title="Edit">Edit</a>
 {undef $prefer_lang}
 {*cavin.deng end*}

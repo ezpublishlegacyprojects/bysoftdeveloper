@@ -47,26 +47,27 @@ if ($http->postVariable('action') == 'form'){
 
 if ($http->postVariable('action') == 'content') {
     
+    function bysoftDeveloperChangeAccess($access)
+    {
+        changeAccess($access);
+        unset($GLOBALS['eZContentObjectDefaultLanguage']);
+        eZContentLanguage::expireCache();
+    }
+    
     $settingFile = $http->postVariable('file');
     $currentSiteAccess = $http->postVariable('siteaccess');
     
     unset($ini);
     
-    if ( $GLOBALS['eZCurrentAccess']['name'] !== $currentSiteAccess )
-    {
-        // create a site ini instance using $useLocalOverrides
-        $siteIni = eZSiteAccess::getIni( $currentSiteAccess, 'site.ini' );
+    $oldSiteAccess = $GLOBALS['eZCurrentAccess'];
 
-        // load settings file with $useLocalOverrides = true & $addArrayDefinition = true
-        $ini = new eZINI( $settingFile,'settings', null, false, true, false, true );
-        $ini->setOverrideDirs( $siteIni->overrideDirs( false ) );
-        $ini->load();
-    }
-    else
-    {
-        // load settings file more or less normally but with $addArrayDefinition = true
-        $ini = new eZINI( $settingFile,'settings', null, false, null, false, true );
-    }
+    $newSiteAccess = array(
+        "name" => $currentSiteAccess,
+        "type" => EZ_ACCESS_TYPE_URI
+    );
+    bysoftDeveloperChangeAccess($newSiteAccess);
+    // load settings file more or less normally but with $addArrayDefinition = true
+    $ini = new eZINI( $settingFile,'settings', null, false, null, false, true );
 
     $blocks = $ini->groups();
     $placements = $ini->groupPlacements();
@@ -163,7 +164,9 @@ if ($http->postVariable('action') == 'content') {
     
     $tpl->setVariable( 'siteaccess_list', $siteAccessList );
     $tpl->setVariable( 'current_siteaccess', $currentSiteAccess );
-    
+
+    bysoftDeveloperChangeAccess($oldSiteAccess);
+
     echo $tpl->fetch('design:bysoftdeveloper/ini/content.tpl');
 }
 

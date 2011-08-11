@@ -92,6 +92,7 @@ class eZDebug
     const HANDLE_NONE = 0;
     const HANDLE_FROM_PHP = 1;
     const HANDLE_TO_PHP = 2;
+    const HANDLE_EXCEPTION = 3;
 
     const OUTPUT_MESSAGE_SCREEN = 1;
     const OUTPUT_MESSAGE_STORE = 2;
@@ -100,7 +101,6 @@ class eZDebug
     const MAX_LOGROTATE_FILES = 3;
 
     const XDEBUG_SIGNATURE = '--XDEBUG--';
-
     /*!
       Creates a new debug object.
     */

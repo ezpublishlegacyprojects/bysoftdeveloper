@@ -1404,12 +1404,39 @@ class eZDebug
 
         if ( $as_html )
         {
+        	$ini = eZINI::instance('bysoftdeveloper.ini');
+        	$max_height = $ini->variable('BysoftDeveloper', 'MaxHeight');
+        	$width = $ini->variable('BysoftDeveloper', 'Width');
+        	$float_x = $ini->variable('BysoftDeveloper', 'FloatX');
+        	$float_y = $ini->variable('BysoftDeveloper', 'FloatY');
             // cavin.deng
 echo <<<EOT
 <script type="text/javascript">
 	//
-	// author cavin.deng
+	// author cavin.deng, alva.wu
 	//
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g,"");
+	}
+	String.prototype.ltrim = function() {
+		return this.replace(/^\s+/,"");
+	}
+	String.prototype.rtrim = function() {
+		return this.replace(/\s+$/,"");
+	}
+	var _get = function(v, i, t){
+		switch(i){
+	    	case 'id':
+	    		return document.getElementById(v);
+	    	case 'name':
+	    		if(t == 'list')
+	    			return document.getElementsByName(v);
+	    		else
+	    			return document.getElementByName(v);
+	    	default:
+	    		return document.getElementById(v);
+	    }
+	}
 	function bysoftdeveloperAjax(options){
 		
 		var isOpera = navigator.userAgent.indexOf('Opera') > -1;
@@ -1485,6 +1512,7 @@ echo <<<EOT
 			request.onreadystatechange = function(){
 				if( request.readyState == 4 ){  // If the request is finished
 					if(request.status == 200){  // If it was successful
+						_get('bysoftdeveloper-loading').style.display = 'none';
 						result = request.responseText;
 						if( callback ){
 							result = callback(result);  // Display the server's response
@@ -1498,7 +1526,7 @@ echo <<<EOT
 			url = url.replace('?', '');
 			url = url + '?' + data;
 		}
-		
+		_get('bysoftdeveloper-loading').style.display = 'block';
 		request.open( method.toUpperCase(), url, asyn);
 		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		
@@ -1510,6 +1538,7 @@ echo <<<EOT
 		
 		// @see, http://hi.baidu.com/snowleung/blog/item/2bbad188cbdd7d9da5c2728f.html
 		if(  ! asyn && isMoz  ){
+
 			result = request.responseText;
 			if( callback ){
 				result = callback( result );
@@ -1533,7 +1562,7 @@ function Yetii() {
 		active: 1,
 		interval: null,
 		wait: null,
-		persist: null,
+		persist: true,
 		tabclass: 'tab',
 		activeclass: 'active',
 		callback: null,
@@ -1548,7 +1577,7 @@ function Yetii() {
 	this.getTabs = function() {
         	
         var retnode = [];
-        var elem = document.getElementById(this.defaults.id).getElementsByTagName('*');
+        var elem = _get(this.defaults.id).getElementsByTagName('*');
 		
 		var regexp = new RegExp("(^|\\s)" + this.defaults.tabclass.replace(/\-/g, "\\-") + "(\\s|$)");
 	
@@ -1560,8 +1589,8 @@ function Yetii() {
     
     };
 	
-	this.links = document.getElementById(this.defaults.id + '-nav').getElementsByTagName('a');
-	this.listitems = document.getElementById(this.defaults.id + '-nav').getElementsByTagName('li');
+	this.links = _get(this.defaults.id + '-nav').getElementsByTagName('a');
+	this.listitems = _get(this.defaults.id + '-nav').getElementsByTagName('li');
 	
 	this.show = function(number) {
         
@@ -1647,7 +1676,7 @@ function Yetii() {
 		
 		if (result==null) return null;
 		if (parseInt(result)) return parseInt(result); 
-		if (document.getElementById(result)) {	
+		if (_get(result)) {	
 			for (var i=0;i<this.tabs.length;i++) {
 				if (this.tabs[i].id == result) return (i+1);
 			}
@@ -1731,7 +1760,7 @@ function bysoftdeveloperToggleDebugBox(){
 }
 
 function bysoftdeveloperToggleInlineById(e, status) {
-	if( typeof e == 'string' ) e = document.getElementById(e);
+	if( typeof e == 'string' ) e = _get(e);
 				
 	if( status != undefined ){
 		var value = (status == 'inline' || (status != 'none' && status) ) ? 'inline' : 'none';
@@ -1748,7 +1777,7 @@ function bysoftdeveloperToggleInlineById(e, status) {
 	}
 }
 function bysoftdeveloperToggleById(e, status){
-	if( typeof e == 'string' ) e = document.getElementById(e);
+	if( typeof e == 'string' ) e = _get(e);
 				
 	if( status != undefined ){
 		var value = (status == 'block' || (status != 'none' && status) ) ? 'block' : 'none';
@@ -1765,14 +1794,14 @@ function bysoftdeveloperToggleById(e, status){
 	}
 }
 function bysoftdeveloperDebugFloatInternal(){
-	var positionY = 200;
+	var positionY = $float_y;
 	
-	var contentObject = document.getElementById('bysoftdeveloper-wrapper');
+	var contentObject = _get('bysoftdeveloper-wrapper');
 	if( contentObject.style.display == 'block' ){
 		return;
 	}
 	
-	var obj = document.getElementById('debug');
+	var obj = _get('debug');
 	
 	var deltaY;
 	
@@ -1807,6 +1836,13 @@ if (window.addEventListener){
 pre{
 	white-space: pre-line;
 }
+.bysoftdeveloper-tabs-container a{
+    color: #E55211;
+    text-decoration: none;
+}
+.bysoftdeveloper-tabs-container{
+       
+}
 .bysoftdeveloper-ul-layout a.active{
     background: none repeat scroll 0 0 #FFFFFF;
     color: #0000FF;
@@ -1839,10 +1875,45 @@ pre{
 </style>
 EOT;
             // cavin.deng
-            
+$tabini = eZINI::instance('bysoftdeveloper.ini');
+
+$availableTabList = $tabini->variable('TabsSettings', 'AvaiableTabList');
+$tabsStartNum = 5;	
+$tabsHTML = $tabsContainerHTML = $tabsCallerHTML = $tabsInteractionHTML = '';
+
+foreach($availableTabList as $key => $availableTab)
+{
+	// dynamic generation of tabs
+	$tabsHTML .= "<li><a href=\"#bysoftdeveloper-$key\">$availableTab</a></li>";
+	
+	// dynamic generation of tabs containers
+	$innerContent = file_get_contents(getcwd() . '/extension/bysoftdeveloper/tabs/' . $key . '/tabcontent.php');
+	$tabsContainerHTML .= "<div id='bysoftdeveloper-$key' class='bysoftdeveloper-tab-class'>$innerContent</div>";
+	
+	// dynamic generation of tabs caller
+	$tabloadfunction = $tabini->variable('Tab-' . $key, 'Tabload');
+	if(isset($tabloadfunction) && $tabloadfunction != '')
+	{
+		$tabsCallerHTML .=<<<EOT
+		if (tabnumber == $tabsStartNum && $tabloadfunction instanceof Function ) 
+		{
+			$tabloadfunction();
+		}
+EOT;
+	}
+	$tabsStartNum++;
+	
+	// dynamic generation of tabs interaction
+	$tabsInteractionHTML .= require_once(getcwd() . '/extension/bysoftdeveloper/tabs/' . $key . '/interact.php');
+//	echo $interactionContent;
+
+}
+
+
+
 			echo <<<EOT
-	<div id="debug" style="position:absolute;left:5px;z-index:999;font-size:11px;font-family:Verdana,Arial,Tahoma,'Courier New';">
-		<div id="bysoftdeveloper-toggle" style="height:20px;background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">
+	<div id="debug" style="position:absolute;left:$float_x;z-index:999;font-size:11px;font-family:Verdana,Arial,Tahoma,'Courier New';">
+		<div id="bysoftdeveloper-toggle" style="cursor:pointer;height:20px;background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">
 			<a style="color:white;float:left;">Debug Tool</a>
 			<a onclick="javascript:bysoftdeveloperClearCache(event);" 
            		id="bysoftdeveloper-clear-cache" 
@@ -1853,16 +1924,17 @@ EOT;
 		<div id="bysoftdeveloper-message" style="padding-left:10px;padding-right:10px;background-color:green;color:white;text-align:center;">
 		</div>
 		<div id="bysoftdeveloper-wrapper" 
-			style="display:none;background-color:white;border:3px solid green;width:1000px;">
+			style="display:none;background-color:white;border:3px solid green;width:$width;">
 	    	
 			<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
 	            <li><a href="#bysoftdeveloper-content">Debug</a></li>
 	            <li><a href="#bysoftdeveloper-template">Templates</a></li>
 	            <li><a href="#bysoftdeveloper-toolbar">Toolbar</a></li>
 	            <li><a href="#bysoftdeveloper-ini">Ini</a></li>
-	            <li><a href="#bysoftdeveloper-classes">Classes</a></li>
-	            <li><a href="#bysoftdeveloper-translate">Translate</a></li>
+	            $tabsHTML
+	            <li id="bysoftdeveloper-loading" style="display:none;"><img src="/extension/bysoftdeveloper/design/standard/images/ajax.gif" /></li>
 	        </ul>
+	        
 EOT;
             
             if ( !$this->UseCSS )
@@ -2268,16 +2340,19 @@ EOT;
             $bysoftDebugTemplate = ob_get_clean();
         }
         
-        $bysoftdeveloperIniUrl = 'bysoftdeveloper/ini';
-        $bysoftdeveloperClassesUrl = 'bysoftdeveloper/classes';
-        $bysoftdeveloperClearCacheUrl = 'bysoftdeveloper/clearcache';
+        $bysoftdeveloperIniUrl 			= 'bysoftdeveloper/ini';
+        $bysoftdeveloperClassesUrl 		= 'bysoftdeveloper/classes';
+        $bysoftdeveloperClearCacheUrl 	= 'bysoftdeveloper/clearcache';
+        $bysoftdeveloperUserUrl			= 'bysoftdeveloper/user';
         eZURI::transformURI($bysoftdeveloperIniUrl, false);
         eZURI::transformURI($bysoftdeveloperClassesUrl, false);
         eZURI::transformURI($bysoftdeveloperClearCacheUrl, false);
-        
+        eZURI::transformURI($bysoftdeveloperUserUrl, false);
         // cavin.deng
         // actually output here
         if ($as_html) {
+        	
+
 $outputBysoft = <<<EOT
 <div class='bysoftdeveloper-tabs-container'>
     <div id='bysoftdeveloper-content' class='bysoftdeveloper-tab-class'>
@@ -2293,18 +2368,7 @@ $outputBysoft = <<<EOT
         <div id='bysoftdeveloper-ini-form'></div>
         <div id='bysoftdeveloper-ini-content'></div>
     </div>
-    <div id='bysoftdeveloper-classes' class='bysoftdeveloper-tab-class'>
-        <div id='bysoftdeveloper-classes-form'></div>
-        <div id='bysoftdeveloper-classes-content'></div>
-    </div>
-    <div id='bysoftdeveloper-translate' class='bysoftdeveloper-tab-class'>
-        <div id='bysoftdeveloper-translate-wrap'>
-            <p>Source string:</p>
-            <textarea id='bysoftdeveloper-translate-source' rows=5 onkeyup='javascript:bysoftdeveloperTranslate();' style='margin-left:20px;width:90%'></textarea>
-            <p>Converted applicable characters in string:</p>
-            <textarea id='bysoftdeveloper-translate-result' rows=5 style='margin-left:20px;width:90%'></textarea>
-        </div>
-    </div>
+    $tabsContainerHTML
 </div>
 <div style='background-color:green;color:white;text-align:center;' onclick='javascript:bysoftdeveloperToggleDebugBox();'>
     Close
@@ -2313,6 +2377,7 @@ $outputBysoft = <<<EOT
 <div>
 
 <script type='text/javascript'>
+
 
 var bysoftdeveloperTabber = new Yetii({
     id: 'bysoftdeveloper-wrapper',
@@ -2323,7 +2388,7 @@ var bysoftdeveloperTabber = new Yetii({
 // after ts (1000 = 1s) to hidden message content
 function bysoftdeveloperHiddenMessage(ts) {
 	setTimeout(function(){
-		document.getElementById('bysoftdeveloper-message').style.display = 'none';
+		_get('bysoftdeveloper-message').style.display = 'none';
         }, ts);
 }
 
@@ -2337,8 +2402,8 @@ function bysoftdeveloperClearCache(e){
     }
 	var options = {url:'$bysoftdeveloperClearCacheUrl', callback:bysoftdeveloperClearCacheMessage};
 	function bysoftdeveloperClearCacheMessage(result){
-		document.getElementById('bysoftdeveloper-message').innerHTML = result;
-		document.getElementById('bysoftdeveloper-message').style.display = 'block';
+		_get('bysoftdeveloper-message').innerHTML = result;
+		_get('bysoftdeveloper-message').style.display = 'block';
 		bysoftdeveloperHiddenMessage(3000);
     }
 	bysoftdeveloperAjax(options);
@@ -2356,9 +2421,9 @@ function bysoftdeveloperTabCallback(tabnumber){
     if (tabnumber == 4) {
         bysoftdeveloperShowIniTab();
     }
-    if (tabnumber == 5) {
-        bysoftdeveloperShowClassesTab();
-    }
+    $tabsCallerHTML
+    
+    
 }
 
 // ini ajax content 
@@ -2373,13 +2438,13 @@ function bysoftdeveloperShowIniTab(){
 	developerIniFormLoaded = true;
 	
 	function bysoftdeveloperUpdateIniForm(result){
-	    document.getElementById('bysoftdeveloper-ini-form').innerHTML = result;
+	    _get('bysoftdeveloper-ini-form').innerHTML = result;
     }
 }
 function bysoftdeveloperChangeIniFile(){
-    var file = document.getElementById('bysoftdeveloperSelectedINIFile');
+    var file = _get('bysoftdeveloperSelectedINIFile');
     var file = bysoftdeveloperGetOptionValue(file);
-    var siteaccess = document.getElementById('bysoftdeveloperCurrentSiteAccess');
+    var siteaccess = _get('bysoftdeveloperCurrentSiteAccess');
     var siteaccess = bysoftdeveloperGetOptionValue(siteaccess);
     
     
@@ -2388,39 +2453,10 @@ function bysoftdeveloperChangeIniFile(){
     bysoftdeveloperAjax(options);
     
     function bysoftdeveloperUpdateIniContent(result){
-        document.getElementById('bysoftdeveloper-ini-content').innerHTML = result;
+        _get('bysoftdeveloper-ini-content').innerHTML = result;
     }
 }
 
-// classes ajax content
-var developerClassesFormLoaded = false;
-function bysoftdeveloperShowClassesTab(){
-    if (developerClassesFormLoaded) { 
-        return true;
-    }
-    var data = {action: 'form'};
-    var options = {url: '$bysoftdeveloperClassesUrl', data:data, callback:bysoftdeveloperUpdateClassesForm};
-    bysoftdeveloperAjax(options);
-    developerClassesFormLoaded = true;
-    
-    function bysoftdeveloperUpdateClassesForm(result) {
-        document.getElementById('bysoftdeveloper-classes-form').innerHTML = result; 
-    }
-}
-function bysoftdeveloperChangeClass(){
-    var selectedClass = document.getElementById('bysoftdeveloperSelectedClass');
-    var selectedClass = bysoftdeveloperGetOptionValue(selectedClass);
-    
-    if (!selectedClass) return;
-    
-    var data = {action: 'content', selectedClass: selectedClass};
-    var options = {url:'$bysoftdeveloperClassesUrl', data: data, callback: bysoftdeveloperUpdateClassesContent};
-    bysoftdeveloperAjax(options);
-    
-    function bysoftdeveloperUpdateClassesContent(result){
-        document.getElementById('bysoftdeveloper-classes-content').innerHTML = result;
-    }
-}
 function bysoftdeveloperDisabledSelectOnChange(select, value){
 	for (var i = 0; i < select.options.length; i++) {
 	    if (select.options[i].value == value) {
@@ -2429,20 +2465,13 @@ function bysoftdeveloperDisabledSelectOnChange(select, value){
 	}
 }
 
-// translate utility
-function bysoftdeveloperTranslate(){
-    var sourceText = document.getElementById('bysoftdeveloper-translate-source').value;
+// custom tabs interaction begin
+$tabsInteractionHTML
+// custom tabs interaction end
 
-    sourceText = sourceText + '';
-    sourceText = sourceText.replace(/\\&/g, '&amp;');
-    sourceText = sourceText.replace(/\\\"/g, '&quot;');
-    sourceText = sourceText.replace(/\\'/g, '&apos;');
-    sourceText = sourceText.replace(/\\</g, '&lt;');
-    sourceText = sourceText.replace(/\\>/g, '&gt;');
-    
-    // target
-    document.getElementById('bysoftdeveloper-translate-result').value = sourceText;
-}
+
+
+
 </script>
 EOT;
 // end of bysoft developer   

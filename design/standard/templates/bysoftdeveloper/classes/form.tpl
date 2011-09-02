@@ -8,7 +8,7 @@
 			<optgroup label="{$group.name|wash}">
 			{set $classes=fetch('class','list_by_groups',hash('group_filter',array($group.id)))}
 			{foreach $classes as $cs}
-				<option value="{$cs.identifier}">{$cs.name}</option>
+				<option value="{$cs.id}">{$cs.name}</option>
 			{/foreach}
 			</optgroup>
 		{/foreach}

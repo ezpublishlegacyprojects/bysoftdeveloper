@@ -1,5 +1,8 @@
 {*Table content*}
 <div class="block">
+
+Object Counts: <a href="javascript:void(0)" style="font-size: 150%; font-weight:bold;" onClick="bysoftdeveloperObjectList();" rel="{$class.identifier}">{$count}</a>
+<div id="bysoftdeveloper-classes-objectlist"></div>
 <table class="list" cellspacing="1">
 	<tr>
 		<th>Name</th>
@@ -58,7 +61,7 @@
 	{foreach $attributes as $attr}
 	{set $attr_datatype=$attr.data_type}
 	<tr class="{if eq(mod($i, 2), 0)}bglight{else}bgdark{/if}">
-		<td><input type="text" name="attribute_name[{$i}]" value="{$attr.name}" /></td>
+		<td><a name="class-attribute-{$attr.id}"></a><input type="text" name="attribute_name[{$i}]" value="{$attr.name}" /></td>
 		<td><input type="text" name="attribute_identifier[{$i}]" value="{$attr.identifier}" /></td>
 		<td>
 			<select onchange="javascript:bysoftdeveloperDisabledSelectOnChange(this,'{$attr.data_type_string}');" >

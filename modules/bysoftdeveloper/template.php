@@ -232,9 +232,9 @@ $Result = array();
 $Result['content'] = $tpl->fetch( 'design:bysoftdeveloper/template.tpl' );
 
 $Result['path'] = array(    array('url' => false,
-			                      'text' => ezi18n('design/standard/csv', 'Import') ),
+			                      'text' => 'Import'),
 			                array('url' => false,
-			                      'text' => ezi18n('design/standard/csv', 'CSV') )
+			                      'text' => 'CSV' )
 			                       );
 
 $Result['pagelayout'] = '';			                       

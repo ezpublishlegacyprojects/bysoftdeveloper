@@ -47,6 +47,13 @@ $ViewList["search"] = array(
     "params" => array( ) 
 );
 
+$ViewList["user"] = array(
+    "functions" => array( 'read' ),
+    "default_navigation_part" => 'ezbysoftdevelopernavigationpart',
+    "script" => "user.php",
+    "params" => array( ) 
+);
+
 $FunctionList = array( );
 $FunctionList['read'] = array( );
 

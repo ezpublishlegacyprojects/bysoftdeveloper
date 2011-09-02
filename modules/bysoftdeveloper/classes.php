@@ -6,6 +6,11 @@ include_once( 'kernel/common/template.php' );
 $ini = eZINI::instance();
 $ini->setVariable('RegionalSettings', 'TextTranslation', 'disabled');
 
+// Authorize the user to admin when doing fetch
+$current_user = eZUser::currentUser ();
+$admin = eZUser::fetch($ini->variable('BysoftDeveloper', 'AdminID'));
+SwitchUser::switchTo($admin);
+
 $tpl = templateInit();
 $http = eZHTTPTool::instance();
 
@@ -20,18 +25,19 @@ if ($http->postVariable('action') == 'form') {
 
 if ($http->postVariable('action') == 'content') {
     
-    $classIdentifier = $http->postVariable('selectedClass');
+    $class_id = $http->postVariable('selectedClass');
     
-    $class = eZContentClass::fetchByIdentifier($classIdentifier);
+    $class = eZContentClass::fetch($class_id);
     
     $attributes = $class->fetchAttributes();
     
     eZDataType::loadAndRegisterAllTypes();
     
     $datatypes = eZDataType::registeredDataTypes();
+    $count = eZContentObject::fetchListCount(array('contentclass_id' => $class_id));
     
+    $tpl->setVariable('count', $count);
     $tpl->setVariable('class', $class);
-    $tpl->setVariable('class_identifier', $classIdentifier);
     $tpl->setVariable('attributes', $attributes);
     $tpl->setVariable('datatypes', $datatypes );
     
@@ -40,6 +46,35 @@ if ($http->postVariable('action') == 'content') {
     
 }
 
+
+if ($http->postVariable('action') == 'object') {
+    
+    $class_id = $http->postVariable('selectedClass');
+    $class = eZContentClass::fetch($class_id);
+    
+    $contentobject_list = eZContentObject::fetchList(true,  array('contentclass_id' => $class_id));
+
+  //  $tpl->setVariable('class_identifier', $classIdentifier);
+	$tpl->setVariable('contentobject_list', $contentobject_list);
+    
+    $template = 'design:bysoftdeveloper/classes/object.tpl';
+    echo $tpl->fetch($template);
+    
+}
+
+if ($http->postVariable('action') == 'objectcontent') {
+    
+    $object_id = $http->postVariable('object_id');
+	$object = eZContentObject::fetch($object_id);
+    
+    $tpl->setVariable('object', $object);
+
+    
+    $template = 'design:bysoftdeveloper/classes/objectcontent.tpl';
+    echo $tpl->fetch($template);
+    
+}
+SwitchUser::switchTo($current_user);
 eZExecution::cleanExit();;
 
 ?>

@@ -43,14 +43,67 @@ class eZTemplatesStatisticsReporter
     static function generateStatistics( $as_html = true )
     {
         $statStartTime = microtime( true );
+        $ini = eZINI::instance('site.ini');
+        $activeExtensions = $ini->variable('ExtensionSettings', 'ActiveExtensions');
+        $enable_highlight = false;
+        $highlight_script = '';
+        $highlight_event = '';
+        $highlight_button = "";
         $stats = '';
+        
+        if(in_array('ezjscore', $activeExtensions) && in_array('ezsh', $activeExtensions))
+        {
+        	$enable_highlight = true;
+        	$highlighturl = 'ezjscore/run/geshi/highlight';
+        	eZURI::transformURI($highlighturl, false);
+        	$highlight_event = "ondblclick='javascript:bysoftdeveloperHighlight();'";
+        	$highlight_button = '<input type="button" value="View" onclick="javascript:bysoftdeveloperHighlight();" />';
+        	$highlight_script = <<<EOT
+        	function bysoftdeveloperHighlight(){
+        		var fp = document.getElementById('bysoftdeveloper-template-reporter-input').value;
+        		if(typeof(fp) == 'undefined'|| fp == ''){alert('please select one tpl!'); return false;}
+        		
+        		var url = '$highlighturl' + '/' + fp;
+        		
+        		var options = {url:url, callback:bysoftdeveloperShowHighlightTpl};
+				function bysoftdeveloperShowHighlightTpl(result){
+					document.getElementById('bysoftdeveloper-highlight-view').innerHTML = result;
+					document.getElementById('bysoftdeveloper-highlight-view').style.display = '';
+					goTo();
+			    }
+				bysoftdeveloperAjax(options);
+        	}
+        	function bysoftdeveloperToggleHighlightView(){
+        		
+				var vp = document.getElementById('bysoftdeveloper-highlight-view');
+				if(vp.style.display == 'none'){vp.style.display = '';}else{vp.style.display = 'none';}
+					
+			
+        	}
+EOT;
 
+        }
+        
+        if($enable_highlight)
+        {
+        $stats = <<<EOT
+        <style type="text/css">
+#bysoftdeveloper-highlight-view{font-size: 110%; background:#c7edcc; position: relative; z-index: 99999;} 
+#bysoftdeveloper-highlight-view h1{font-size: 130%;border-bottom:1px dashed; margin-bottom: 5px; }
+</style>
+EOT;
+        }
+        
         if ( !eZTemplate::isTemplatesUsageStatisticsEnabled() )
             return $stats;
 
         if ( $as_html )
         {
-            $stats .= "<h2>Templates used to render the page:</h2>";
+        	if($enable_highlight)
+        	{
+        		$stats .= "<div><div style='text-align:center;background:green;color:#fff;cursor:pointer;font-weight:bold;' onclick='javascript:bysoftdeveloperToggleHighlightView();'>Tpl Highlight</div><div id='bysoftdeveloper-highlight-view' style='display:none;'></div></div>";
+        	}
+        	$stats .= "<h2>Templates used to render the page:</h2>";
             $stats .= ( "<table id='templateusage' summary='List of used templates' style='border: 1px dashed black;' cellspacing='0'>" .
                    "<tr><th>Usages</th>" .
                    "<th>Requested template</th>" .
@@ -65,7 +118,7 @@ class eZTemplatesStatisticsReporter
             $stats .= <<<EOT
             <tr>
             	<td colspan="6" align="center">
-            		Template Path:<input size=150 type="text" value="" id="bysoftdeveloper-template-reporter-input" />
+            		Template Path:<input size=150 type="text" value="" id="bysoftdeveloper-template-reporter-input" />$highlight_button
             	</td>
             </tr>
 EOT;
@@ -151,7 +204,7 @@ EOT;
                     $fullFileName = str_replace('\\', '/', $siteDir . $templateFileName );
 
                     $stats .= (
-                           "<tr onclick=\"show_design_path('$fullFileName', this, event);\">" .
+                           "<tr onclick=\"show_design_path('$fullFileName', this, event);\" $highlight_event>" .
                            "<td class=\"$tdClass\">$templateCounts[$actualTemplateName]</td>" .
                            "<td class=\"$tdClass\"><a href=\"$requestedTemplateViewURI\">$requestedTemplateName</a></td>" .
                            "<td class=\"$tdClass\">$actualTemplateNameOutput</td>" .
@@ -198,7 +251,7 @@ EOT;
         {
             $stats .= "\nTotal templates count: " . $totalTemplatesCount . "\n" . "Total unique templates count: " . $totalUniqueTemplatesCopunt . "\n";
         }
-        
+
 		// cavin.deng add these js.
 		$template_js = <<<EOT
         <script type="text/javascript">
@@ -218,6 +271,8 @@ EOT;
         		else 
         			e.cancelBubble = true
         	}
+        	
+        	$highlight_script
         </script>
 EOT;
 

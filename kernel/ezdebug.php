@@ -1415,6 +1415,16 @@ echo <<<EOT
 	//
 	// author cavin.deng, alva.wu
 	//
+	if(!Array.indexOf){
+	    Array.prototype.indexOf = function(obj){
+	        for(var i=0; i<this.length; i++){
+	            if(this[i]==obj){
+	                return i;
+	            } 
+	        }
+	        return -1;
+	    }
+	}
 	String.prototype.trim = function() {
 		return this.replace(/^\s+|\s+$/g,"");
 	}
@@ -1424,17 +1434,20 @@ echo <<<EOT
 	String.prototype.rtrim = function() {
 		return this.replace(/\s+$/,"");
 	}
-	var _get = function(v, i, t){
+	
+	var _get = function(v, i, t, o){
+		var parent = o || document;
 		switch(i){
 	    	case 'id':
-	    		return document.getElementById(v);
+	    		return parent.getElementById(v);
 	    	case 'name':
 	    		if(t == 'list')
-	    			return document.getElementsByName(v);
+	    			return parent.getElementsByName(v);
 	    		else
-	    			return document.getElementByName(v);
+	    			return parent.getElementByName(v);
+	    		
 	    	default:
-	    		return document.getElementById(v);
+	    		return parent.getElementById(v);
 	    }
 	}
 	function bysoftdeveloperAjax(options){
@@ -1546,6 +1559,40 @@ echo <<<EOT
 		}
 		return result;
 	}
+var goX=_get('debug').style.left;
+var goY=_get('debug').style.top;
+function goTo(a, t) {
+	a = a || 0.1;
+	t = t || 16;
+
+	var x1 = 0;
+	var y1 = 0;
+	var x2 = 0;
+	var y2 = 0;
+	var x3 = 0;
+	var y3 = 0;
+
+	if (document.documentElement) {
+		x1 = document.documentElement.scrollLeft || 0;
+		y1 = document.documentElement.scrollTop || 0;
+	}
+	if (document.body) {
+		x2 = document.body.scrollLeft || 0;
+		y2 = document.body.scrollTop || 0;
+	}
+	var x3 = window.scrollX || 0;
+	var y3 = window.scrollY || 0;
+
+	var x = Math.max(x1, Math.max(x2, x3));
+	var y = Math.max(y1, Math.max(y2, y3));
+
+	var speed = 1 + a;
+	window.scrollTo(Math.floor(x / speed), Math.floor(y / speed));
+	if(x > goX || y > goY) {
+		var f = "goTo(" + a + ", " + t + ")";
+		window.setTimeout(f, t);
+	}
+}
 /*
 Yetii - Yet (E)Another Tab Interface Implementation
 version 1.6
@@ -1758,6 +1805,40 @@ function bysoftdeveloperToggleDebugBox(){
 	bysoftdeveloperToggleById('bysoftdeveloper-clear-cache');
 	//bysoftdeveloperToggleInlineById('bysoftdeveloper-clear-cache');
 }
+//var bysoftdeveloperDebugArray = _get('debug-row', 'name', 'list');
+var bysoftdeveloperDebugArray = document.getElementsByTagName('dl');
+var bysoftdeveloperDebugFilter = function(){
+    var cb = _get('bysoftdeveloper-debug-filter', 'name', 'list');
+    var checked_level = Array();
+    for(var k = 0; k < cb.length; k++){
+		
+    	if(cb[k].checked){
+
+    		checked_level.push(cb[k].value);
+        }
+    }
+
+	for(k = 0; k < bysoftdeveloperDebugArray.length; k++){
+		
+		if(typeof(bysoftdeveloperDebugArray[k]) == 'object' && bysoftdeveloperDebugArray[k].getAttribute('name') == 'debug-row') {
+	    	if(checked_level.indexOf(bysoftdeveloperDebugArray[k].className) == -1  ){
+	        	bysoftdeveloperDebugArray[k].style.display = 'none';
+	        }else{
+	        	bysoftdeveloperDebugArray[k].style.display = '';
+	        }
+        }
+    }
+}
+
+var bysoftdeveloperDebugTabAccordion = function(ah){
+    var ctn = ah.nextSibling;
+    if( ctn.style.display == 'none' ){
+    	ctn.style.display = 'block';
+    }else{
+    	ctn.style.display = 'none';
+    }
+}
+
 
 function bysoftdeveloperToggleInlineById(e, status) {
 	if( typeof e == 'string' ) e = _get(e);
@@ -1836,11 +1917,20 @@ if (window.addEventListener){
 pre{
 	white-space: pre-line;
 }
+#bysoftdeveloper-content h2{
+	font-size: 120%;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	margin-bottom: 5px;
+	background: #eee;
+}
 .bysoftdeveloper-tabs-container a{
     color: #E55211;
     text-decoration: none;
 }
 .bysoftdeveloper-tabs-container{
+	font-family: monospace; 
+	font-size: 110%;
        
 }
 .bysoftdeveloper-ul-layout a.active{
@@ -1895,7 +1985,7 @@ foreach($availableTabList as $key => $availableTab)
 	if(isset($tabloadfunction) && $tabloadfunction != '')
 	{
 		$tabsCallerHTML .=<<<EOT
-		if (tabnumber == $tabsStartNum && $tabloadfunction instanceof Function ) 
+		if (tabnumber == $tabsStartNum && typeof($tabloadfunction) == 'function' ) 
 		{
 			$tabloadfunction();
 		}
@@ -1913,18 +2003,19 @@ EOT;
 
 			echo <<<EOT
 	<div id="debug" style="position:absolute;left:$float_x;z-index:999;font-size:11px;font-family:Verdana,Arial,Tahoma,'Courier New';">
-		<div id="bysoftdeveloper-toggle" style="cursor:pointer;height:20px;background-color:green;color:white;" onclick="javascript:bysoftdeveloperToggleDebugBox();">
+		<div id="bysoftdeveloper-toggle" style="cursor:pointer;height:20px;background-color:green;color:white;padding-left:3px;padding-right:3px;" onclick="javascript:bysoftdeveloperToggleDebugBox();">
 			<a style="color:white;float:left;">Debug Tool</a>
+			
 			<a onclick="javascript:bysoftdeveloperClearCache(event);" 
            		id="bysoftdeveloper-clear-cache" 
           		style="display:none;color:white;float:right;">
            		Clear Cache
            	</a>
 		</div>
-		<div id="bysoftdeveloper-message" style="padding-left:10px;padding-right:10px;background-color:green;color:white;text-align:center;">
+		<div id="bysoftdeveloper-message" style="display:none;padding-left:10px;padding-right:10px;font-weight:bold;background-color:green;color:white;text-align:center;">
 		</div>
 		<div id="bysoftdeveloper-wrapper" 
-			style="display:none;background-color:white;border:3px solid green;width:$width;">
+			style="display:none;background-color:white;border:3px solid green;">
 	    	
 			<ul id="bysoftdeveloper-wrapper-nav" class="bysoftdeveloper-ul-layout">
 	            <li><a href="#bysoftdeveloper-content">Debug</a></li>
@@ -1980,7 +2071,13 @@ EOT;
             if ($as_html) {
                 ob_start();    
             }
-            echo "<table style='border: 1px lightgray;' cellspacing='0' summary='Table for actual debug output, shows notices, warnings and errors.'>";
+            echo "<h2 onclick='javascript:bysoftdeveloperDebugTabAccordion(this);'>Debug Messages:</h2>";
+            echo "<div style='width:$width;'><label style='display:inline;'><input type='checkbox' value='debuglevel-1' name='bysoftdeveloper-debug-filter' checked='checked' onclick='javascript:bysoftdeveloperDebugFilter();' /><b style='color: {$this->OutputFormat[self::LEVEL_NOTICE]['color']};'>Notice</b></label>
+    	<label style='display:inline;'><input type='checkbox' value='debuglevel-2' name='bysoftdeveloper-debug-filter' checked='checked' onclick='javascript:bysoftdeveloperDebugFilter();' /><b style='color: {$this->OutputFormat[self::LEVEL_WARNING]['color']};'>Warning</b></label>
+    	<label style='display:inline;'><input type='checkbox' value='debuglevel-3' name='bysoftdeveloper-debug-filter' checked='checked' onclick='javascript:bysoftdeveloperDebugFilter();' /><b style='color: {$this->OutputFormat[self::LEVEL_ERROR]['color']};'>Error</b></label>
+    	<label style='display:inline;'><input type='checkbox' value='debuglevel-4' name='bysoftdeveloper-debug-filter' checked='checked' onclick='javascript:bysoftdeveloperDebugFilter();' /><b style='color: {$this->OutputFormat[self::LEVEL_TIMING_POINT]['color']};'>Timing point</b></label>
+    	<label style='display:inline;'><input type='checkbox' value='debuglevel-5' name='bysoftdeveloper-debug-filter' checked='checked' onclick='javascript:bysoftdeveloperDebugFilter();' /><b style='color: {$this->OutputFormat[self::LEVEL_DEBUG]['color']};'>Debug</b></label>
+    	<label style='display:inline;'><input type='checkbox' value='debuglevel-6' name='bysoftdeveloper-debug-filter' checked='checked' onclick='javascript:bysoftdeveloperDebugFilter();' /><b style='color: {$this->OutputFormat[self::LEVEL_STRICT]['color']};'>Strict</b></label>";
         }
 
         
@@ -2032,9 +2129,17 @@ EOT;
                     else
                         $contents = htmlspecialchars( $debug['String'] );
 
-                    echo "<tr><td class='debugheader' valign='top'$identifierText><b><span style='color: $color'>$name:</span> $label</b></td>
+             /*       echo "<tr class='debuglevel-{$debug['Level']}' name='debug-row'><td class='debugheader' valign='top'$identifierText><b><span style='color: $color'>$name:</span> $label</b></td>
                                     <td class='debugheader' valign='top'>$time</td></tr>
-                                    <tr><td colspan='2'><pre$pre>" .  $contents . "</pre></td></tr>";
+                                    <tr class='debuglevel-{$debug['Level']}' name='debug-row'><td colspan='2'><pre$pre>" .  $contents . "</pre></td></tr>";*/
+                    echo "<dl class='debuglevel-{$debug['Level']}' name='debug-row'><dt class='debugheader' valign='top'$identifierText><b><span style='color: $color'>$name:</span> $label</b></td>
+                                    <span class='debugheader' style='float:right; margin-right:5px;'>$time</span></dt>
+                                    <dd class='debuglevel-{$debug['Level']}'>";
+                    if($debug['Level'] == self::LEVEL_NOTICE)
+                    	echo "<pre$pre style='width:$width;	overflow-x:scroll;'>  $contents </pre>";
+                    else
+                    	echo $contents ;
+                    echo "</dd></dl>";
                 }
                 else
                 {
@@ -2046,9 +2151,9 @@ EOT;
         }
         if ( $as_html )
         {
-            echo "</table>";
-
-            echo "<h2>Timing points:</h2>";
+   //         echo "</table>";
+			echo '</div>';
+            echo "<h2 onclick='javascript:bysoftdeveloperDebugTabAccordion(this);'>Timing points:</h2>";
             echo "<table id='timingpoints' style='border: 1px dashed black;' cellspacing='0' summary='Tabel of timingpoint stats.'><tr><th>Checkpoint</th><th>Elapsed</th><th>Rel. Elapsed</th><th>Memory</th><th>Rel. Memory</th></tr>";
         }
         $startTime = false;
@@ -2184,7 +2289,7 @@ EOT;
 
         if ( $as_html )
         {
-            echo "<h2>Time accumulators:</h2>";
+            echo "<h2 onclick='javascript:bysoftdeveloperDebugTabAccordion(this);'>Time accumulators:</h2>";
             echo "<table id='timeaccumulators' style='border: 1px dashed black;' cellspacing='0' summary='Table with detailed list of time accumulators'><tr><th>&nbsp;Accumulator</th><th>&nbsp;Elapsed</th><th>&nbsp;Percent</th><th>&nbsp;Count</th><th>&nbsp;Average</th></tr>";
             $i = 0;
         }
@@ -2356,7 +2461,7 @@ EOT;
 $outputBysoft = <<<EOT
 <div class='bysoftdeveloper-tabs-container'>
     <div id='bysoftdeveloper-content' class='bysoftdeveloper-tab-class'>
-        $bysoftDebugContent
+    	$bysoftDebugContent
     </div>
     <div id='bysoftdeveloper-template' class='bysoftdeveloper-tab-class'>
         $bysoftDebugTemplate
@@ -2403,7 +2508,7 @@ function bysoftdeveloperClearCache(e){
 	var options = {url:'$bysoftdeveloperClearCacheUrl', callback:bysoftdeveloperClearCacheMessage};
 	function bysoftdeveloperClearCacheMessage(result){
 		_get('bysoftdeveloper-message').innerHTML = result;
-		_get('bysoftdeveloper-message').style.display = 'block';
+		_get('bysoftdeveloper-message').style.display = '';
 		bysoftdeveloperHiddenMessage(3000);
     }
 	bysoftdeveloperAjax(options);

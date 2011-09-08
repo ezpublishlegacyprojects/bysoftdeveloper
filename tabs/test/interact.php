@@ -3,7 +3,7 @@ $bysoftdeveloperTestUrl 		= 'bysoftdeveloper/test';
 
 eZURI::transformURI($bysoftdeveloperTestUrl, false);
 
-$test_interactcontent = <<<EOT
+return <<<EOT
 // classes ajax content
 function bysoftdeveloperShowTestTab(){
     var data = {};
@@ -16,4 +16,3 @@ function bysoftdeveloperShowTestTab(){
     }
 }
 EOT;
-return $test_interactcontent;

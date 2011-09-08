@@ -3,7 +3,7 @@
 $bysoftdeveloperUserUrl			= 'bysoftdeveloper/user';
 eZURI::transformURI($bysoftdeveloperUserUrl, false);
 
-$user_interactcontent = <<<EOT
+return <<<EOT
 function  bysoftdeveloperShowUserTab(){
     var data = {action: 'info'};
     var options = {url: '$bysoftdeveloperUserUrl', data:data, callback:bysoftdeveloperUpdateUserinfo};
@@ -35,4 +35,3 @@ function  bysoftdeveloperShowUserTab(){
     }
 }
 EOT;
-return $user_interactcontent;

@@ -1,5 +1,5 @@
 <?php 
-$translate_interactcontent = <<<EOT
+return <<<EOT
 function bysoftdeveloperShowTranslateTab(){
 	_get('bysoftdeveloper-translate-source').onblur = function(e){
 		var sourceText = _get('bysoftdeveloper-translate-source').value;
@@ -16,5 +16,3 @@ function bysoftdeveloperShowTranslateTab(){
 }
 
 EOT;
-
-return $translate_interactcontent;

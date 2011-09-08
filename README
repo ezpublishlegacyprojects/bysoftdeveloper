@@ -1,0 +1,23 @@
+Notice:
+	1) This tool need the ez kernel override supported, so please check if your ez installation support the kernel
+	override feature.
+	
+	2) If want to use the tpl view/highlight, make sure the ezjscore and ezsh are installed well, and the logined 
+	user can access to the ezjscore/run and geshi/highlight.
+
+HOW TO INSTALL?
+
+	1) In the config.php(copy from the config.php-RECOMMENDED if not exitsed), uncomment the line:
+	define( 'EZP_AUTOLOAD_ALLOW_KERNEL_OVERRIDE', false );
+	and set it true.
+	
+	2) Enable the extension "bysoftdeveloper".
+	
+	3) Run the following commands:
+		php bin/php/ezpgenerateautoloads.php -o
+		php bin/php/ezpgenerateautoloads.php -e
+		php bin/php/ezcache.php --clear-all --purge
+		
+	4) Edit bysoftdeveloper.ini.
+		Set the PHPBinaryPath to your php execute.
+		Set the AdminID to your admin id(Normally is 14, just incase).

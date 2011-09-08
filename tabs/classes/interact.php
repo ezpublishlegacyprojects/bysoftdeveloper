@@ -3,7 +3,7 @@ $bysoftdeveloperClassesUrl 		= 'bysoftdeveloper/classes';
 
 eZURI::transformURI($bysoftdeveloperClassesUrl, false);
 
-$class_interactcontent = <<<EOT
+return <<<EOT
 // classes ajax content
 var developerClassesFormLoaded = false;
 function bysoftdeveloperShowClassesTab(){
@@ -82,4 +82,3 @@ function bysoftdeveloperClassesObjectcontentToggle(object_id){
     }
 }
 EOT;
-return $class_interactcontent;
